@@ -1,0 +1,78 @@
+<div class="container mx-auto px-4 mt-10">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
+    {% for category in categories %}
+      <a href="{% url 'product:shop' slug=category.slug %}" class="flex flex-col justify-center items-center group">
+        <!-- باکس اصلی - بزرگ‌تر شده -->
+        <div class="size-32 sm:size-36 md:size-44 lg:size-48 xl:size-52 p-4 sm:p-5 flex justify-center items-center
+                    bg-white shadow-lg hover:shadow-xl border-2 border-zinc-200 transition-all duration-300
+                    hover:border-primary-500 hover:scale-105 rounded-3xl">
+          {% if category.image %}
+            <img class="w-20 sm:w-24 md:w-28 lg:w-32 h-auto max-h-20 sm:max-h-24 md:max-h-28 lg:max-h-32 object-contain"
+                 src="{{ category.image.url }}" alt="{{ category.title }}">
+          {% else %}
+            <img class="w-20 sm:w-24 md:w-28 lg:w-32 h-auto max-h-20 sm:max-h-24 md:max-h-28 lg:max-h-32 object-contain opacity-40"
+                 src="{{ MEDIA_URL }}image/default-category.png" alt="بدون تصویر">
+          {% endif %}
+        </div>
+
+        <!-- عنوان دسته‌بندی -->
+        <h2 class="text-center text-zinc-700 pt-3 sm:pt-4 text-sm sm:text-base font-medium leading-tight mt-2">
+          {{ category.title }}
+        </h2>
+      </a>
+    {% empty %}
+      <p class="col-span-full text-center text-gray-600 mt-10 text-lg">هیچ دسته‌بندی پیدا نشد</p>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+/* استایل‌های سفارشی برای نمایش بهتر */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .grid {
+    gap: 1rem;
+  }
+}
+
+/* برای اطمینان از نمایش 2 تا در موبایل */
+@media (max-width: 767px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* برای نمایش 4 تا در دسکتاپ */
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* سایزهای responsive برای باکس‌ها */
+.size-32 { width: 8rem; height: 8rem; }
+.size-36 { width: 9rem; height: 9rem; }
+.size-44 { width: 11rem; height: 11rem; }
+.size-48 { width: 12rem; height: 12rem; }
+.size-52 { width: 13rem; height: 13rem; }
+
+/* سایه‌های سفارشی */
+
+
+.hover\:shadow-xl:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2), 0 10px 15px -8px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* برای تصاویر */
+.object-contain {
+  object-fit: contain;
+}
+</style>

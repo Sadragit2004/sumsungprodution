@@ -1,0 +1,83 @@
+{% extends "db_template.html" %}
+
+
+
+{% block content %}
+
+<main class="p-6 flex-1 overflow-y-auto mr-64 mt-10">  <!-- اضافه کردن margin-right -->
+    <div class="bg-white rounded-2xl min-h-80 h-auto shadow-custom p-4">
+        <div class="px-2 md:px-3 pt-3 pb-5 mb-3 text-zinc-700 text-sm md:text-base flex items-center gap-x-2 border-b border-zinc-200">
+            <svg class="fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="" viewBox="0 0 256 256">
+                <path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path>
+            </svg>
+            مشخصات من
+        </div>
+
+        <!-- نمایش پیام‌ها -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-3 rounded-lg text-sm {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="lg:w-10/12 mx-auto py-5 text-sm md:text-base">
+            {% csrf_token %}
+
+            <div class="sm:flex gap-x-5">
+                <div class="sm:w-1/2 mb-2 sm:mb-0 flex flex-col gap-y-1">
+                    <label class="text-zinc-700 flex">
+                        نام و نام خانوادگی
+                        <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#4d4d4d" viewBox="0 0 256 256">
+                            <path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path>
+                        </svg>
+                    </label>
+                    <input name="name" value="{{ user.name|default:'' }}" class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300" type="text" placeholder="نام و نام خانوادگی">
+                </div>
+                <div class="sm:w-1/2 flex flex-col gap-y-1">
+                    <label class="text-zinc-700 flex">
+                        سن
+                        <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#4d4d4d" viewBox="0 0 256 256">
+                            <path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path>
+                        </svg>
+                    </label>
+                    <input name="age" value="{{ current_age|default:'' }}" class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300" type="number" min="1" max="150" placeholder="سن">
+                </div>
+            </div>
+
+            <div class="sm:flex gap-x-5 mt-5">
+                <div class="sm:w-1/2 mb-2 sm:mb-0 flex flex-col gap-y-1">
+                    <label class="text-zinc-700 flex">
+                        جنسیت
+                        <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#4d4d4d" viewBox="0 0 256 256">
+                            <path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path>
+                        </svg>
+                    </label>
+                    <select name="gender" class="appearance-none rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300">
+                        <option value="">انتخاب کنید</option>
+                        <option value="True" {% if user.gender == 'True' %}selected{% endif %}>مرد</option>
+                        <option value="False" {% if user.gender == 'False' %}selected{% endif %}>زن</option>
+                    </select>
+                </div>
+                <div class="sm:w-1/2 flex flex-col gap-y-1">
+                    <label class="text-zinc-700 flex">
+                        شماره تماس
+                        <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#4d4d4d" viewBox="0 0 256 256">
+                            <path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path>
+                        </svg>
+                    </label>
+                    <input name="phone_number" value="{{ user.mobileNumber }}" class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300" type="text" placeholder="شماره تماس">
+                </div>
+            </div>
+
+            <button type="submit" class="block text-center w-full md:w-4/12 mx-auto px-2 py-3 mt-10 text-sm bg-gradient-to-bl from-primary-500 to-primary-700 hover:opacity-80 transition text-gray-100 rounded-lg">
+                ثبت اطلاعات
+            </button>
+        </form>
+    </div>
+</main>
+
+{% endblock content %}

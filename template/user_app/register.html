@@ -1,0 +1,33 @@
+{% extends "account_template.html" %}
+
+{% load static %}
+
+{% block content %}
+<main class="">
+  <div class="h-screen flex justify-center items-center bg-gradient-to-bl from-primary-600 to-primary-800">
+    <div class="bg-white rounded-2xl shadow-custom w-11/12 sm:w-7/12 md:w-6/12 lg:w-4/12 xl:w-3/12 h-auto py-5 px-4">
+      <img class="w-32 mx-auto" src="{% static 'image/logo.png' %}" alt="">
+      <div class="mt-5 text-lg font-semibold text-zinc-800">
+        ورود
+      </div>
+      <div class="my-4 text-xs text-zinc-500">
+        لطفا شماره موبایل خود را وارد کنید
+      </div>
+
+      <form method="post" class="flex flex-col gap-y-3">
+        {% csrf_token %}
+        {{ form.mobileNumber }}
+
+        {% if form.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.mobileNumber.errors.0 }}</p>
+        {% endif %}
+
+        <button type="submit"
+          class="flex items-center justify-center gap-x-1 text-sm max-w-md mt-5 py-3 rounded-lg text-white bg-gradient-to-bl from-primary-600 to-primary-800 hover:opacity-85 transition">
+          ورود
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends "main_template.html" %}
+
+{% load render_partial %}
+
+{% block meta1 %}
+<title>سامسونگ مرکزی آذربایجان | فروش و خدمات تخصصی پرینتر سامسونگ</title>
+
+<meta name="description" content="سامسونگ مرکزی آذربایجان، مرکز فروش و خدمات تخصصی پرینترهای سامسونگ. ارائه‌ی انواع مدل‌های پرینتر، تعمیرات حرفه‌ای، قطعات یدکی اصلی و پشتیبانی سریع برای مشتریان عزیز. تماس با ما: 09023580159 - 09143000483.">
+
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="سامسونگ مرکزی آذربایجان">
+<meta property="og:title" content="سامسونگ مرکزی آذربایجان | مرکز تخصصی فروش و خدمات پرینتر سامسونگ">
+<meta property="og:description" content="سامسونگ مرکزی آذربایجان، ارائه‌دهنده‌ی فروش، تعمیر و خدمات پس از فروش پرینترهای سامسونگ. قاطع پاستور، ۱۰۰ متر نرسیده به چهارراه طالقانی، جنب کانون فرهنگی.">
+<meta property="og:image" content="{{ media_url }}default/og-image.jpg">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="سامسونگ مرکزی آذربایجان | فروش پرینتر سامسونگ">
+<meta name="twitter:description" content="مرکز فروش و خدمات پرینترهای سامسونگ با ارائه‌ی قطعات اصلی و تعمیرات تخصصی. تماس: 09023580159 - 09143000483.">
+<meta name="twitter:image" content="{{ media_url }}default/og-image.jpg">
+
+<!-- Contact & Location -->
+<meta name="author" content="سامسونگ مرکزی آذربایجان">
+<meta name="geo.region" content="IR-01">
+<meta name="geo.placename" content="آذربایجان شرقی">
+<meta name="geo.position" content="38.0667;46.2993">
+<meta name="ICBM" content="38.0667, 46.2993">
+
+<!-- Canonical -->
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+<!-- Business Info -->
+<meta name="business:contact_data:email" content="example@gmail.com">
+<meta name="business:contact_data:phone_number" content="+989023580159">
+<meta name="business:contact_data:phone_number_2" content="+989143000483">
+<meta name="business:contact_data:street_address" content="قاطع پاستور، ۱۰۰ متر نرسیده به چهارراه طالقانی، جنب کانون فرهنگی">
+{% endblock meta1 %}
+
+
+{% block content %}
+
+  <main class="pt-24 md:pt-48 px-2 md:px-10">
+    <!-- hero slider -->
+       {% render_partial 'main:slider_list_view' %}
+
+    <!-- category -->
+    {% render_partial 'product:category_group' %}
+    <!-- filter products -->
+
+    <!-- product slider 1 -->
+     {% render_partial 'product:best_selling_products_view' %}
+    <!-- 2 banner -->
+        {% render_partial 'main:slider_main_view' %}
+
+    <!-- product slider 2 -->
+        {% render_partial 'product:recently' %}
+        {% render_partial 'product:newest_drives' %}
+
+    <!-- brands -->
+            {% render_partial 'product:brands' %}
+
+    <!-- blog -->
+            {% render_partial 'blog:blogmain' %}
+
+  </main>
+
+{% endblock content %}

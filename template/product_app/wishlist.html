@@ -1,0 +1,294 @@
+{% extends "db_template.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<!-- محتوای اصلی -->
+    <main class="p-6 flex-1 overflow-y-auto">
+        <div class="bg-white rounded-2xl min-h-80 h-auto shadow-custom p-4">
+            <div class="px-2 md:px-3 pt-3 pb-5 mb-3 text-zinc-700 text-sm md:text-base flex items-center gap-x-2 border-b border-zinc-200">
+                <svg class="fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256">
+                    <path d="M178,34c-21,0-39.26,9.47-50,25.34C117.26,43.47,99,34,78,34A60.07,60.07,0,0,0,18,94c0,29.2,18.2,59.59,54.1,90.31a334.68,334.68,0,0,0,53.06,37,6,6,0,0,0,5.68,0,334.68,334.68,0,0,0,53.06-37C219.8,153.59,238,123.2,238,94A60.07,60.07,0,0,0,178,34ZM128,209.11C111.59,199.64,30,149.72,30,94A48.05,48.05,0,0,1,78,46c20.28,0,37.31,10.36,44.45,28.27a6,6,0,0,0,11.1,0C140.69,56.83,157.72,46,178,46a48.05,48.05,0,0,1,48,48C226,149.72,144.41,199.64,128,209.11Z"></path>
+                </svg>
+                علاقه‌مندی‌های من
+            </div>
+
+            {% if wishlist_products %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 xl:gap-6 relative z-10">
+                {% for product in wishlist_products %}
+                <div class="bg-white border border-zinc-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 relative group">
+                    <!-- دکمه حذف -->
+                    <button class="absolute top-3 left-3 text-red-500 hover:text-red-600 transition-colors remove-wishlist z-20 bg-white rounded-full p-1 shadow-lg"
+                            data-product-id="{{ product.id }}"
+                            title="حذف از علاقه‌مندی‌ها">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
+                    <!-- تصویر محصول -->
+                    <a href="{{ product.url }}" class="block relative overflow-hidden rounded-xl mb-3">
+                        {% if product.image_url %}
+                            <img class="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                                 src="{{ product.image_url }}"
+                                 alt="{{ product.title }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="w-full h-40 bg-zinc-100 flex items-center justify-center rounded-xl">
+                                <svg class="w-12 h-12 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        {% endif %}
+
+                        <!-- نشانگر تخفیف -->
+                        {% if product.discount_percentage > 0 %}
+                        <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                            {{ product.discount_percentage }}%
+                        </div>
+                        {% endif %}
+                    </a>
+
+                    <!-- اطلاعات محصول -->
+                    <div class="space-y-2">
+                        <!-- برند -->
+                        <p class="text-zinc-500 text-xs font-medium">
+                            {{ product.brand }}
+                        </p>
+
+                        <!-- عنوان محصول -->
+                        <a href="{{ product.url }}" class="text-zinc-800 text-sm font-semibold line-clamp-2 block hover:text-primary-600 transition-colors">
+                            {{ product.title }}
+                        </a>
+
+                        <!-- امتیاز و نظرات -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1 text-xs text-zinc-500">
+                                <span>({{ product.comments_count }})</span>
+                                <span>{{ product.rating|floatformat:1 }}</span>
+                                <div class="flex">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= product.rating %}
+                                            <svg class="w-3 h-3 fill-yellow-400" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        {% else %}
+                                            <svg class="w-3 h-3 fill-zinc-300" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- رنگ‌ها -->
+                            <div class="flex gap-1">
+                                <div class="size-3 bg-blue-500 rounded-full border border-zinc-300"></div>
+                                <div class="size-3 bg-red-500 rounded-full border border-zinc-300"></div>
+                                <div class="size-3 bg-green-500 rounded-full border border-zinc-300"></div>
+                            </div>
+                        </div>
+
+                        <!-- قیمت -->
+                        <div class="flex items-center justify-between pt-2 border-t border-zinc-100">
+                            <div class="text-zinc-800 flex items-center gap-1 font-yekanBakhBold text-lg">
+                                {% if product.discount_percentage > 0 %}
+                                    <span class="text-zinc-400 line-through text-sm">
+                                        {{ product.price|intcomma }}
+                                    </span>
+                                    <span class="text-red-500 bg-red-50 px-2 py-1 rounded-full text-xs font-medium">
+                                        {{ product.discount_percentage }}%
+                                    </span>
+                                {% endif %}
+                                <span>{{ product.final_price|intcomma }}</span>
+                                <img class="size-4" src="{% static 'images/icons/toman.png' %}" alt="تومان">
+                            </div>
+                        </div>
+
+                        <!-- دکمه‌های عمل -->
+                        <div class="flex gap-2 pt-2">
+                            <button class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-lg text-xs font-medium transition-colors duration-200 remove-wishlist-btn flex items-center justify-center gap-1"
+                                    data-product-id="{{ product.id }}">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                                حذف
+                            </button>
+
+                            <button class="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 px-3 rounded-lg text-xs font-medium transition-colors duration-200 add-to-cart flex items-center justify-center gap-1"
+                                    data-product-id="{{ product.id }}">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                سبد خرید
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- حالت خالی -->
+            <div class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <svg class="w-24 h-24 mx-auto text-zinc-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-zinc-600 mb-3">لیست علاقه‌مندی‌های شما خالی است</h3>
+                    <p class="text-zinc-500 mb-8 leading-relaxed">
+                        می‌توانید محصولات مورد علاقه خود را با کلیک روی آیکون قلب در صفحات محصولات به این لیست اضافه کنید.
+                    </p>
+                    <a href="/" class="inline-flex items-center px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        مشاهده محصولات
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // حذف از علاقه‌مندی‌ها
+    function setupRemoveButtons() {
+        document.querySelectorAll('.remove-wishlist, .remove-wishlist-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                const productCard = this.closest('.bg-white.border');
+
+                if (confirm('آیا از حذف این محصول از علاقه‌مندی‌ها مطمئن هستید؟')) {
+                    // نمایش حالت لودینگ
+                    const originalText = this.innerHTML;
+                    if (this.classList.contains('remove-wishlist-btn')) {
+                        this.innerHTML = '<svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> در حال حذف...';
+                    }
+                    this.disabled = true;
+
+                    fetch(`/product/wishlist/remove/${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // انیمیشن حذف
+                            productCard.style.transform = 'scale(0.95)';
+                            productCard.style.opacity = '0';
+                            productCard.style.transition = 'all 0.4s ease';
+
+                            setTimeout(() => {
+                                productCard.remove();
+
+                                // بررسی اگر محصولی باقی نمانده
+                                const remainingProducts = document.querySelectorAll('.bg-white.border').length;
+                                if (remainingProducts === 0) {
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 500);
+                                }
+                            }, 400);
+                        } else {
+                            alert(data.message || 'خطا در حذف محصول');
+                            if (this.classList.contains('remove-wishlist-btn')) {
+                                this.innerHTML = originalText;
+                            }
+                            this.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('خطا در حذف محصول');
+                        if (this.classList.contains('remove-wishlist-btn')) {
+                            this.innerHTML = originalText;
+                        }
+                        this.disabled = false;
+                    });
+                }
+            });
+        });
+    }
+
+    // افزودن به سبد خرید
+    function setupAddToCartButtons() {
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                addToCartFromWishlist(productId, this);
+            });
+        });
+    }
+
+    // تابع افزودن به سبد خرید از صفحه علاقه‌مندی‌ها
+    function addToCartFromWishlist(productId, button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> در حال افزودن...';
+        button.disabled = true;
+
+        // استفاده از تابع addToCart اصلی
+        addToCart(productId).then(success => {
+            if (success) {
+                button.innerHTML = '✓ افزوده شد';
+                button.classList.remove('bg-primary-500', 'hover:bg-primary-600');
+                button.classList.add('bg-green-500', 'hover:bg-green-600');
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    button.classList.add('bg-primary-500', 'hover:bg-primary-600');
+                    button.disabled = false;
+                }, 2000);
+            } else {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        });
+    }
+
+    // راه‌اندازی اولیه
+    setupRemoveButtons();
+    setupAddToCartButtons();
+});
+
+
+</script>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* انیمیشن‌های بهبود یافته */
+.bg-white.border {
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.bg-white.border:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* تضمین نمایش صحیح در موبایل */
+@media (max-width: 768px) {
+    .grid {
+        gap: 12px;
+    }
+
+    .bg-white.border {
+        margin: 0 4px;
+    }
+}
+</style>
+{% endblock %}

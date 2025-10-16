@@ -1,0 +1,188 @@
+{% extends "account_template.html" %}
+{% load static %}
+
+{% block content %}
+<main class="">
+  <div class="h-screen flex justify-center items-center bg-gradient-to-bl from-primary-600 to-primary-800">
+    <div class="bg-white rounded-2xl shadow-custom w-11/12 sm:w-7/12 md:w-6/12 lg:w-4/12 xl:w-3/12 h-auto py-6 px-5">
+
+      <!-- لوگو -->
+      <img class="w-32 mx-auto" src="{% static 'image/logo.png' %}" alt="">
+
+      <!-- تیتر -->
+      <div class="mt-5 text-lg font-semibold text-zinc-800 text-center">
+        احراز هویت
+      </div>
+      <div class="my-3 text-xs text-zinc-500 text-center">
+        کد تایید ارسال شده به شماره <span class="font-semibold">{{ mobile }}</span> را وارد کنید
+      </div>
+
+      <!-- فرم OTP -->
+      <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="flex flex-row-reverse gap-x-3 justify-center">
+          {{ form.code1}}
+          {{ form.code2}}
+          {{ form.code3}}
+          {{ form.code4}}
+          {{ form.code5}}
+        </div>
+
+        {% if form.errors %}
+          <p class="text-red-500 text-xs mt-2 text-center">{{ form.non_field_errors.0 }}</p>
+        {% endif %}
+
+        <button id="verify-btn" type="submit"
+          class="w-full mt-6 py-3 rounded-lg text-white font-medium bg-gradient-to-bl from-primary-600 to-primary-800 hover:opacity-85 transition">
+          تایید کد
+        </button>
+      </form>
+
+      <!-- بخش ارسال مجدد -->
+      <div class="text-center mt-4">
+        <button id="resendButton" type="button"
+          class="text-sm text-primary-700 font-medium hover:underline transition hidden">
+          ارسال مجدد
+        </button>
+        <div id="countdownSection" class="text-xs text-gray-500">
+          می‌توانید پس از <span id="countdown">00:10</span> دوباره درخواست دهید
+        </div>
+        <div id="resendStatus" class="hidden mt-2 text-sm"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Script -->
+<script>
+  // =========================
+  // COUNTDOWN TIMER
+  // =========================
+  let countdownMinutes = 0;
+  let countdownSeconds = 10;
+  let countdownInterval;
+
+  function updateCountdown() {
+    document.getElementById("countdown").textContent =
+      `${countdownMinutes}:${countdownSeconds.toString().padStart(2,"0")}`;
+  }
+
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    countdownMinutes = 0;
+    countdownSeconds = 10;
+    updateCountdown();
+
+    document.getElementById("resendButton").classList.add("hidden");
+    document.getElementById("countdownSection").classList.remove("hidden");
+
+    countdownInterval = setInterval(function () {
+      if (countdownMinutes === 0 && countdownSeconds === 0) {
+        clearInterval(countdownInterval);
+        document.getElementById("resendButton").classList.remove("hidden");
+        document.getElementById("countdownSection").classList.add("hidden");
+      } else {
+        if (countdownSeconds === 0) {
+          countdownMinutes--;
+          countdownSeconds = 59;
+        } else {
+          countdownSeconds--;
+        }
+        updateCountdown();
+      }
+    }, 1000);
+  }
+
+  startCountdown();
+
+  // =========================
+  // OTP INPUT HANDLING
+  // =========================
+  const inputs = document.querySelectorAll(".otp-input");
+
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", (e) => {
+      if (input.value && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+      // رنگ سبز برای پر شدن
+      input.classList.toggle("!border-emerald-500", !!input.value);
+
+      // اگر همه پر شدند -> فوکوس روی دکمه
+      const allFilled = Array.from(inputs).every(inp => inp.value);
+      if (allFilled) {
+        document.getElementById("verify-btn").focus();
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+
+    input.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const pastedData = e.clipboardData.getData("text");
+      if (/^\d+$/.test(pastedData)) {
+        for (let i = 0; i < Math.min(pastedData.length, inputs.length); i++) {
+          inputs[i].value = pastedData[i];
+          inputs[i].classList.add("!border-emerald-500");
+        }
+        const lastIndex = Math.min(pastedData.length, inputs.length - 1);
+        inputs[lastIndex].focus();
+      }
+    });
+  });
+
+  // =========================
+  // AJAX RESEND
+  // =========================
+  document.getElementById("resendButton").addEventListener("click", function () {
+    const resendButton = this;
+    const resendStatus = document.getElementById("resendStatus");
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    resendButton.disabled = true;
+    resendButton.textContent = "در حال ارسال...";
+    resendStatus.classList.remove("hidden");
+    resendStatus.textContent = "در حال ارسال کد جدید...";
+    resendStatus.className = "mt-2 text-sm text-blue-500";
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "{% url 'account:verify_code' %}", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            resendStatus.textContent = "✅ کد جدید ارسال شد!";
+            resendStatus.className = "mt-2 text-sm text-green-500";
+            startCountdown();
+          } else {
+            resendStatus.textContent = response.message || "خطا در ارسال مجدد";
+            resendStatus.className = "mt-2 text-sm text-red-500";
+          }
+        } catch {
+          resendStatus.textContent = "پاسخ نامعتبر از سرور";
+          resendStatus.className = "mt-2 text-sm text-red-500";
+        }
+      } else {
+        resendStatus.textContent = "خطا در ارتباط با سرور";
+        resendStatus.className = "mt-2 text-sm text-red-500";
+      }
+      resendButton.disabled = false;
+      resendButton.textContent = "ارسال مجدد";
+    };
+    xhr.onerror = function () {
+      resendStatus.textContent = "خطا در ارتباط با سرور";
+      resendStatus.className = "mt-2 text-sm text-red-500";
+      resendButton.disabled = false;
+      resendButton.textContent = "ارسال مجدد";
+    };
+    xhr.send(`resend=true&csrfmiddlewaretoken=${encodeURIComponent(csrfToken)}`);
+  });
+</script>
+{% endblock content %}

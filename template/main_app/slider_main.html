@@ -1,0 +1,11 @@
+<div class="flex flex-col md:flex-row gap-5 mt-12 md:mt-20">
+    {% for banner in sliders %}
+    <a href="{{ banner.link }}">
+        <img
+            class="rounded-xl md:rounded-3xl h-fit"
+            src="{{ banner.imageName.url }}"
+            alt="{{ banner.altSlide }}"
+        >
+    </a>
+    {% endfor %}
+</div>

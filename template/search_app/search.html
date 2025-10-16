@@ -1,0 +1,186 @@
+{% extends "main_template.html" %}
+{% load render_partial %}
+{% load humanize %}
+
+{% block content %}
+
+<main class="pt-24 md:pt-48 px-2 md:px-10">
+    <div class="flex flex-col lg:flex-row md:px-8 md:mt-10 gap-5 pb-20">
+      <!-- filters -->
+      <div class="lg:w-3/12">
+        <!-- filter btn -->
+        <a href="#" class="filter-mobile md:hidden border border-zinc-200 bg-primary-500 fixed p-4 bottom-5 right-5 z-10 rounded-2xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#fff" viewBox="0 0 256 256"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"></path></svg>
+        </a>
+        <div id="mobile-filter" class="space-y-5 fixed transform translate-y-full md:translate-y-0 transition-transform duration-300 ease-in-out md:static bottom-0 right-4 z-[15] bg-white w-11/12 md:w-full shadow-2xl md:shadow-none border border-zinc-300 md:border-0 pb-5 px-5 md:px-0 rounded-t-2xl md:rounded-none">
+          <button id="closeFilter" type="button" class="md:hidden mt-5 text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+          </button>
+
+
+
+
+        </div>
+      </div>
+      <!-- products -->
+      <div class="lg:w-9/12">
+
+        <!-- عنوان دسته‌بندی -->
+        <h1 class="text-2xl md:text-3xl font-bold text-zinc-800 mb-6 text-center md:text-right">
+          {{ group.title }}
+        </h1>
+
+        <div class="flex flex-wrap gap-3 md:gap-5 justify-start items-center bg-white shadow-box-sm rounded-3xl px-5 py-6 border border-zinc-100 mb-5">
+          <div class="text-zinc-600 text-sm">
+            مرتب سازی:
+          </div>
+          <div class="flex gap-3">
+            <a href="?sort=2" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '2' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+                پرفروش ترین
+            </a>
+            <a href="?sort=3" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '3' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+                ارزان ترین
+            </a>
+            <a href="?sort=2" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '2' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+                گران ترین
+            </a>
+            <a href="?sort=1" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '1' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+                جدیدترین
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="products-container">
+          {% for product in products %}
+            <div class="card swiper-slide bg-white border border-zinc-200 rounded-2xl p-2 md:p-3 text-sm hover:shadow-custom transition-shadow">
+              <a href="{{ product.get_absolute_url }}" class="text-zinc-800">
+                <img class="rounded-xl mb-3" src="{{ product.image.url }}">
+              </a>
+              <p class="text-zinc-400 text-xs">
+                {{ product.brand.title }}
+              </p>
+              <a href="{{ product.get_absolute_url }}" class="text-zinc-800 text-xs md:text-sm h-8 lg:h-10 line-clamp-2 mt-2">
+                {{ product.title }}
+              </a>
+              <div class="flex items-center justify-between mt-4">
+                <div class="flex gap-1.5">
+                  {% for feature in product.features_value.all %}
+                    {% if feature.feature.title == "رنگ" %}
+                      <div class="size-6 rounded-full border border-zinc-300" style="background-color: {{ feature.filterValue.value }};"></div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="flex items-start gap-x-1 text-xs text-zinc-500">
+                  <span>
+                    <span>({{ product.comments.count }})</span>
+                    <span>{{ product.avg_rating }}</span>
+                  </span>
+                  <svg class="fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#f9bc00" viewBox="0 0 256 256">
+                    <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="flex items-center justify-end border-t border-dashed border-zinc-300 mt-4 pt-2">
+                <div class="text-zinc-800 flex items-center gap-x-1 justify-end font-yekanBakhBold text-lg">
+                  {{ product.price|intcomma }}
+                  <img class="size-4" src="{{ media_url }}image/icons/toman.png" alt="">
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- دکمه Load More -->
+        {% if products.has_next %}
+          <div class="text-center mt-8" id="load-more-container">
+            <button id="load-more-btn" class="bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors" data-next-page="{{ products.next_page_number }}">
+              بارگذاری بیشتر
+            </button>
+          </div>
+        {% endif %}
+
+        <!-- توضیحات دسته‌بندی در زیر محصولات -->
+        {% if group.description %}
+        <div class="bg-white shadow-box-sm rounded-3xl px-5 py-6 border border-zinc-100 mt-8">
+          <div class="category-description relative">
+            <div id="description-content" class="description-content overflow-hidden transition-all duration-300 max-h-24 relative">
+              {{ group.description|safe }}
+
+              <!-- گرادیان برای پنهان کردن محتوای اضافی -->
+              <div id="description-fade" class="absolute bottom-0 right-0 left-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+            </div>
+
+            <!-- دکمه نمایش بیشتر/کمتر -->
+            <button id="toggle-description" class="text-primary-500 text-sm font-medium mt-3 hover:text-primary-600 transition-colors flex items-center gap-1 mx-auto">
+              <span>نمایش بیشتر</span>
+              <svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </main>
+
+
+<style>
+/* استایل‌های سفارشی برای توضیحات دسته‌بندی */
+.description-content {
+  line-height: 1.6;
+}
+
+.description-content p {
+  margin-bottom: 1rem;
+}
+
+.description-content ul, .description-content ol {
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.description-content li {
+  margin-bottom: 0.5rem;
+}
+
+.description-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.description-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.description-content table,
+.description-content th,
+.description-content td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  text-align: right;
+}
+
+.description-content h1,
+.description-content h2,
+.description-content h3,
+.description-content h4,
+.description-content h5,
+.description-content h6 {
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+}
+
+.description-content h1 { font-size: 1.5rem; }
+.description-content h2 { font-size: 1.25rem; }
+.description-content h3 { font-size: 1.125rem; }
+</style>
+
+
+{% endblock content %}

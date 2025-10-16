@@ -1,0 +1,90 @@
+{% load humanize %}
+<div class="mt-12 md:mt-20">
+    <div class="flex gap-x-4 justify-between items-center mb-7">
+        <span class="w-48 min-w-fit text-zinc-700 text-sm md:text-base md:font-yekanBakhBold">
+            جدیدترین درایور ها
+        </span>
+        <div class="h-[1px] w-full bg-gradient-to-r from-white via-zinc-300 to-white">
+        </div>
+        <div class="w-32 min-w-fit text-left">
+            <a href="" class="group transition flex items-center justify-center gap-x-1 md:gap-x-2 text-zinc-600 hover:text-primary-500 text-xs md:text-sm text-center">
+                مشاهده همه
+                <svg class="fill-zinc-600 group-hover:-translate-x-1 transition group-hover:fill-primary-500 size-2.5 md:size-3" xmlns="http://www.w3.org/2000/svg" width="" height="" fill="" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path></svg>
+            </a>
+        </div>
+    </div>
+    <div class="containerPSlider swiper">
+        <div class="productSlider2">
+            <div class="card-wrapper swiper-wrapper pb-10">
+                {% for product_data in drives %}
+                <div class="card swiper-slide bg-white border border-zinc-200 rounded-2xl p-2 md:p-3 text-sm hover:shadow-custom transition-shadow relative">
+
+                    <a href="{% url 'product:driveDetail' slug=product_data.slug %}" class="text-zinc-800">
+                        <div class="relative">
+                            <!-- درصد تخفیف - روی تصویر -->
+                            {% if product_data.price > product_data.get_price_by_discount %}
+                            <div class="absolute top-2 left-2 z-10">
+                                <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-yekanBakhBold text-sm shadow-lg animate-pulse">
+                                    %{{ product_data.get_discount_percentage }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <img class="rounded-xl mb-3 w-full" src="{{media_url}}{{ product_data.image }}" alt="{{ product_data.title }}">
+                        </div>
+                    </a>
+
+                    <p class="text-zinc-400 text-xs">
+                        {{ product_data.brand }}
+                    </p>
+                    <a href="{% url 'product:driveDetail' slug=product_data.slug %}" class="text-zinc-800 text-xs md:text-sm h-8 lg:h-10 line-clamp-2 mt-2">
+                        {{ product_data.title }}
+                    </a>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex gap-1.5">
+                            {% for color in product_data.colors %}
+                            <div class="size-4 rounded-full border border-zinc-300" style="background-color: {{ color }};"></div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <!-- قسمت نمایش قیمت و تخفیف -->
+                    <div class="flex items-center justify-between border-t border-dashed border-zinc-300 mt-4 pt-2">
+                        <!-- سمت راست: قیمت و تخفیف -->
+                        <div class="flex items-center gap-2">
+                            <!-- قیمت‌ها -->
+                            <div class="flex flex-col items-end">
+                                <!-- قیمت اصلی خط خورده -->
+                                {% if product_data.price > product_data.get_price_by_discount %}
+                                <del class="text-xs text-zinc-400 decoration-red-500">
+                                    {{ product_data.price|intcomma }} تومان
+                                </del>
+                                {% endif %}
+
+                                <!-- قیمت نهایی -->
+                                <div class="text-green-600 flex items-center gap-x-1 font-yekanBakhBold text-lg">
+                                    {% if product_data.price > product_data.get_price_by_discount %}
+                                        {{ product_data.get_price_by_discount|intcomma }}
+                                    {% else %}
+                                        {{ product_data.price|intcomma }}
+                                    {% endif %}
+                                    <span class="text-xs font-normal">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- سمت چپ: دکمه سبد خرید -->
+                        <button type="button"
+                                onclick="addToCart({{ product_data.id }}); showSuccessModal('cartSuccessModal', 'cartSuccessSound');"
+                                class="cursor-pointer bg-primary-500 hover:bg-primary-600 p-2 rounded-full transition-all">
+                            <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5.5M7 13l2.5 5.5m0 0L17 21"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

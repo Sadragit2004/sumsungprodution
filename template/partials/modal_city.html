@@ -1,0 +1,101 @@
+<div id="locationModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
+    <div class="location-modal-content rounded-3xl max-w-md w-full overflow-hidden">
+        <!-- هدر مودال -->
+        <div class="relative bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+            <!-- دکمه بستن -->
+            <button onclick="closeLocationModal()" class="absolute left-4 top-4 text-white/80 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <!-- آیکون و عنوان -->
+            <div class="text-center pt-2">
+                <div class="relative inline-block mb-3">
+                    <div class="pulse-ring absolute inset-0 bg-blue-400 rounded-full"></div>
+                    <div class="relative bg-white/20 rounded-2xl p-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <span class="text-xl font-bold mb-1">انتخاب موقعیت جغرافیایی</span>
+                <p class="text-blue-100 text-sm opacity-90">لطفا استان و شهر خود را انتخاب کنید</p>
+            </div>
+        </div>
+
+        <!-- بدنه مودال -->
+        <div class="p-6 bg-white">
+            <div class="space-y-5">
+                <!-- انتخاب استان -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        استان
+                    </label>
+                    <div class="relative">
+                        <select id="stateSelect" class="location-select w-full rounded-xl px-4 py-3 pr-10 appearance-none cursor-pointer text-gray-700">
+                            <option value="">لطفا استان را انتخاب کنید</option>
+                        </select>
+                        <div class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- انتخاب شهر -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        شهر
+                    </label>
+                    <div class="relative">
+                        <select id="citySelect" class="location-select w-full rounded-xl px-4 py-3 pr-10 appearance-none cursor-pointer text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <option value="">ابتدا استان را انتخاب کنید</option>
+                        </select>
+                        <div class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- موقعیت انتخاب شده -->
+                <div id="selectedLocation" class="hidden bg-green-50 border border-green-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="success-check">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-green-800 font-semibold" id="selectedLocationText"></p>
+                                <p class="text-xs text-green-600">موقعیت شما با موفقیت انتخاب شد</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- دکمه های action -->
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeLocationModal()" class="location-btn location-btn-secondary flex-1 py-3 rounded-xl font-semibold transition-all">
+                    انصراف
+                </button>
+                <button onclick="saveLocation()" id="saveBtn" class="location-btn location-btn-primary flex-1 py-3 rounded-xl text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" disabled>
+                    <span id="saveBtnText">تایید موقعیت</span>
+                    <span id="saveBtnLoading" class="hidden loading-spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

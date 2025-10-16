@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" xmlns="http://www.w3.org/1999/xhtml" xmlns:og="https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-title" content="جم ویژن ایران">
+  <meta name="application-name" content="جم ویژن ایران">
+  <meta name="enamad" content="9992550" />
+
+  <link rel="alternate" href="{{ request.build_absolute_uri }}" hreflang="fa-IR" />
+  <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+
+  <meta name="msapplication-TileColor" content="#358597">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- آیکون‌ها -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/media/img/logo-new.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/media/img/logo-new.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/media/img/logo-new.png">
+  <link rel="shortcut icon" href="/media/img/logo-new.png">
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="fa_IR" />
+  <meta property="og:type" content="website" />
+
+  {% block meta1 %}{% endblock meta1 %}
+
+  <!-- Styles -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/main654.css' %}">
+</head>
+
+<body class="max-w-[1700px] mx-auto">
+
+    <div class="w-full lg:w-[83%] mr-auto flex flex-col min-h-screen">
+
+  {% include "panel_app/partials/header.html" %}
+
+  {% block content %}
+  {% csrf_token %}
+  {% endblock content %}
+</div>
+  {% include "partials/scripts.html" %}
+  {% block scripts %}{% endblock scripts %}
+
+</body>
+</html>

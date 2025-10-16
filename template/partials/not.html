@@ -1,0 +1,350 @@
+
+
+    <style>
+        /* استایل‌های سفارشی برای مودال موفقیت */
+        @media (max-width: 768px) {
+            /* نمایش مودال از پایین صفحه در موبایل */
+            .success-modal:not(.hidden) {
+                align-items: flex-end;
+                padding-bottom: 20px;
+                background-color: transparent !important;
+            }
+
+            /* استایل اصلی مودال */
+            .success-modal:not(.hidden) > .modal-container {
+                width: 95%;
+                max-width: 95%;
+                margin: 0 auto;
+                border-radius: 12px;
+                animation: modalSlideUp 0.5s ease-out forwards;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                border: 1px solid rgba(255, 165, 0, 0.3);
+                background: white;
+                transform-origin: bottom center;
+            }
+
+            /* انیمیشن ظهور */
+            @keyframes modalSlideUp {
+                from {
+                    transform: translateY(100%) scale(0.95);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0) scale(1);
+                    opacity: 1;
+                }
+            }
+
+            /* انیمیشن محو شدن */
+            @keyframes modalFadeOut {
+                to {
+                    opacity: 0;
+                    transform: translateY(20%) scale(0.95);
+                }
+            }
+
+            /* حالت محو شدن */
+            .success-modal.fade-out > .modal-container {
+                animation: modalFadeOut 0.5s ease-in forwards !important;
+            }
+
+            /* نوار پیشرفت زمانی */
+            .success-modal:not(.hidden) > .modal-container::after {
+                content: '';
+                display: block;
+                width: 0%;
+                height: 3px;
+                background: linear-gradient(to right, #FFA500, #FF8C00);
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                animation: progressBar 4s linear forwards;
+                animation-delay: 0.5s;
+                border-radius: 0 0 12px 12px;
+            }
+
+            @keyframes progressBar {
+                from { width: 0%; }
+                to { width: 100%; }
+            }
+
+            /* استایل‌های تیک */
+            .success-modal:not(.hidden) .bi-check-circle {
+                color: #FFA500 !important;
+                font-size: 1.8rem;
+                animation: tickAppear 0.3s ease-out forwards;
+                animation-delay: 0.8s;
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            @keyframes tickAppear {
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            /* استایل‌های متن */
+            .success-modal:not(.hidden) .modal-title {
+                color: #FFA500 !important;
+                font-weight: bold !important;
+                font-size: 1rem !important;
+            }
+
+            .success-modal:not(.hidden) .modal-message {
+                color: #555 !important;
+                font-weight: bold !important;
+                font-size: 0.9rem !important;
+                line-height: 1.5;
+            }
+
+            /* دکمه‌ها */
+            .success-modal:not(.hidden) .modal-button {
+                background: rgba(255, 165, 0, 0.1) !important;
+                color: #FFA500 !important;
+                font-weight: bold !important;
+                border: none !important;
+                padding: 0.5rem 1rem !important;
+                border-radius: 20px !important;
+                font-size: 0.85rem !important;
+            }
+
+            .success-modal:not(.hidden) .cart-link {
+                display: inline-block;
+                background: rgba(255, 165, 0, 0.1) !important;
+                color: #FFA500 !important;
+                padding: 0.5rem 1rem !important;
+                border-radius: 20px !important;
+                margin-top: 0.8rem !important;
+                text-decoration: none !important;
+                font-weight: bold !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        /* استایل‌های عمومی برای همه دستگاه‌ها */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .success-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .success-modal.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            color: #FFA500;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-message {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-button {
+            background: rgba(255, 165, 0, 0.1);
+            color: #FFA500;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .modal-button:hover {
+            background: rgba(255, 165, 0, 0.2);
+        }
+
+        .progress-bar {
+            height: 4px;
+            width: 0;
+            background: linear-gradient(to right, #FFA500, #FF8C00);
+            border-radius: 0 0 4px 4px;
+            transition: width 4s linear;
+        }
+
+        /* دمو استایل‌ها */
+        .demo-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .demo-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-button {
+            padding: 0.75rem 1.5rem;
+            background: #FFA500;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .demo-button:hover {
+            background: #e59400;
+        }
+    </style>
+
+    <!-- مودال افزودن به سبد خرید -->
+    <div id="cartSuccessModal" class="success-modal hidden">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">پیام موفقیت</div>
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">
+                    محصول شما با موفقیت به سبد خرید اضافه شد
+                    <br>
+                    <a style='margin-top:10px; background:orange; color:#ffff; padding:3px; border-radius: 10px;' href="/order/cart/" class="cart-link">برو به سبد خرید</a>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-button" onclick="closeModal('cartSuccessModal')">باشه</button>
+            </div>
+            <div class="progress-bar"></div>
+        </div>
+        <audio id="cartSuccessSound" preload="auto">
+            <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- مودال ثبت نظر -->
+    <div id="commentSuccessModal" class="success-modal hidden">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">پیام موفقیت</div>
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">نظر شما با موفقیت ثبت شد</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-button" onclick="closeModal('commentSuccessModal')">باشه</button>
+            </div>
+            <div class="progress-bar"></div>
+        </div>
+        <audio id="commentSuccessSound" preload="auto">
+            <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // تابع نمایش مودال
+        function showSuccessModal(modalId, soundId) {
+            const modal = document.getElementById(modalId);
+            const sound = document.getElementById(soundId);
+
+            if (modal) {
+                // حذف کلاس hidden و اضافه کردن active
+                modal.classList.remove("hidden");
+                setTimeout(() => {
+                    modal.classList.add("active");
+                }, 10);
+
+                // شروع نوار پیشرفت
+                const progressBar = modal.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = '0';
+                    setTimeout(() => {
+                        progressBar.style.width = '100%';
+                    }, 10);
+                }
+
+                // پخش صدا
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.play().catch(e => console.log("پخش صدا با خطا مواجه شد: ", e));
+                }
+
+                // بسته شدن خودکار بعد 4.5 ثانیه
+                setTimeout(() => {
+                    closeModal(modalId);
+                }, 4500);
+            }
+        }
+
+        // تابع بستن مودال
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove("active");
+                setTimeout(() => {
+                    modal.classList.add("hidden");
+                }, 300);
+            }
+        }
+
+        // بستن مودال با کلیک خارج از آن
+        document.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.success-modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+    </script>

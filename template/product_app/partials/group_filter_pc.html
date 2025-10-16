@@ -1,0 +1,25 @@
+<div class="border border-zinc-100 h-fit rounded-2xl py-2 hover:shadow-sm transition-all">
+    <button class="menu-toggle flex justify-between w-full py-3 px-4 rounded-2xl cursor-pointer">
+        <span class="text-zinc-700 text-sm">دسته بندی</span>
+        <img class="w-4 transition-transform opacity-80" src="{{ media_url }}image/icons/arrowDown.svg" alt="">
+    </button>
+
+    <ul class="submenu hidden mt-2">
+        {% for group in groups %}
+        <li>
+            <button class="menu-toggle text-xs flex justify-between w-full py-2 px-4 text-zinc-700 hover:bg-gray-50 transition-colors">
+                <a href="{% url 'product:shop' group.slug %}" class="w-full text-right flex items-center justify-between">
+                    <span>{{ group.title }}</span>
+                    <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">{{ group.product_count }}</span>
+                </a>
+            </button>
+        </li>
+        {% empty %}
+        <li>
+            <button class="menu-toggle text-xs flex justify-between w-full py-2 px-4 text-zinc-500">
+                <span>دسته‌بندی‌ای یافت نشد</span>
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

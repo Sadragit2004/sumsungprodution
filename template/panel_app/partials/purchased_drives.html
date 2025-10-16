@@ -1,0 +1,81 @@
+{% extends 'db_template.html' %}
+{% load static humanize %}
+
+{% block content %}
+<div class="w-full lg:w-[83%] mr-auto flex flex-col min-h-screen">
+    <main class="p-4 flex-1 overflow-y-auto">
+        <!-- هدر ساده -->
+        <div class="mb-6">
+            <h1 class="text-xl font-bold text-gray-800">درایورهای خریداری شده</h1>
+            <p class="text-gray-600 text-sm mt-1">لیست درایورهایی که خریداری کرده‌اید</p>
+        </div>
+
+        <!-- لیست درایورها -->
+        <div class="space-y-3">
+            {% for order_detail in purchased_drives %}
+            <div class="bg-white border border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <!-- عکس سمت راست -->
+                    <div class="w-16 h-16 flex-shrink-0">
+                        {% if order_detail.product.image %}
+                        <img src="{{ order_detail.product.image.url }}"
+                             alt="{{ order_detail.product.title }}"
+                             class="w-full h-full object-cover rounded-lg border border-gray-200">
+                        {% else %}
+                        <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-download text-gray-400"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- نام محصول -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-medium text-gray-900 text-sm leading-tight mb-1">
+                            {{ order_detail.product.title }}
+                        </h3>
+                        <p class="text-gray-500 text-xs">
+                            {{ order_detail.product.brand.title|default:"بدون برند" }}
+                        </p>
+                    </div>
+
+                    <!-- قیمت -->
+                    <div class="text-left ml-4">
+                        <div class="text-green-600 font-bold text-sm">
+                            {{ order_detail.price|intcomma }}
+                        </div>
+                        <div class="text-gray-500 text-xs">تومان</div>
+                    </div>
+
+                    <!-- دکمه دانلود -->
+                    <div class="flex gap-2">
+                        {% if order_detail.product.drive %}
+                        <a href="{{ order_detail.product.drive.url }}"
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-download text-xs"></i>
+                            دانلود
+                        </a>
+                        {% endif %}
+
+                       
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- حالت خالی -->
+            <div class="text-center py-8">
+                <div class="bg-gray-100 rounded-lg p-6 max-w-md mx-auto">
+                    <i class="fas fa-download text-4xl text-gray-400 mb-3"></i>
+                    <h3 class="text-gray-700 font-medium mb-2">درایوری خریداری نکرده‌اید</h3>
+                    <p class="text-gray-500 text-sm mb-4">پس از خرید درایورها در اینجا نمایش داده می‌شوند</p>
+                    <a href="{% url 'driver_app:all_drives' %}"
+                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-2">
+                        <i class="fas fa-search"></i>
+                        مشاهده درایورها
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

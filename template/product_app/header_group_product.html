@@ -1,0 +1,77 @@
+<div id="dropdown-menu" class="absolute z-10 right-0 mt-2 w-72 h-fit bg-white p-5 shadow-lg rounded-3xl flex opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+    <ul class="rounded-2xl bg-white flex flex-col gap-y-3 w-full" id="categories-menu">
+        <div class="text-center text-gray-500 py-4">
+            <svg class="animate-spin h-6 w-6 mx-auto text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-2 text-sm">در حال بارگذاری...</p>
+        </div>
+    </ul>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadCategoriesMenu();
+});
+
+function loadCategoriesMenu() {
+    fetch('/product/f/categories-menu/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderCategoriesMenu(data.categories);
+            } else {
+                showCategoriesError();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            showCategoriesError();
+        });
+}
+
+function renderCategoriesMenu(categories) {
+    const menuContainer = document.getElementById('categories-menu');
+
+    if (!categories || categories.length === 0) {
+        menuContainer.innerHTML = `
+            <div class="text-center text-gray-500 py-4">
+                <p class="text-sm">دسته‌بندی‌ای یافت نشد</p>
+            </div>
+        `;
+        return;
+    }
+
+    let menuHTML = '';
+
+    categories.forEach(category => {
+        const badge = category.product_count > 0 ?
+            `<span class="bg-primary-100 text-primary-600 text-xs px-2 py-1 rounded-full">${category.product_count}</span>` : '';
+
+        menuHTML += `
+            <a href="/product/category/${category.slug}/">
+                <li class="group/cat flex items-center justify-between bg-gradient-to-l hover:from-zinc-100 hover:to-transparent text-sm rounded-lg px-4 py-3 text-gray-600 hover:text-primary-500 cursor-pointer transition-all duration-200">
+                    <span>${category.title}</span>
+                    ${badge}
+                </li>
+            </a>
+        `;
+    });
+
+    menuContainer.innerHTML = menuHTML;
+}
+
+function showCategoriesError() {
+    const menuContainer = document.getElementById('categories-menu');
+    menuContainer.innerHTML = `
+        <div class="text-center text-red-500 py-4">
+            <p class="text-sm">خطا در بارگذاری</p>
+            <button onclick="loadCategoriesMenu()" class="mt-2 text-xs text-primary-500 hover:text-primary-600">
+                تلاش مجدد
+            </button>
+        </div>
+    `;
+}
+</script>

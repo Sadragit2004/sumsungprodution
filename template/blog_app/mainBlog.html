@@ -1,0 +1,53 @@
+<div class="mt-12 md:mt-20">
+    <!-- top -->
+    <div class="flex gap-x-4 justify-between items-center mb-7">
+        <div class="w-48 min-w-fit text-zinc-700 text-sm md:text-base md:font-yekanBakhBold">
+            جدیدترین مقالات
+        </div>
+        <div class="h-[1px] w-full bg-gradient-to-r from-white via-zinc-300 to-white">
+        </div>
+        <div class="w-32 min-w-fit text-left">
+            
+        </div>
+    </div>
+    <!-- main -->
+    <div class="containerPSlider swiper">
+        <div class="blog1 pb-16 px-4">
+            <div class="card-wrapper swiper-wrapper">
+                {% for blog in top_blogs %}
+                <div class="card swiper-slide bg-white min-h-60 rounded-2xl border hover:border-primary-500 transition border-zinc-300 group p-2 md:p-3 hover:drop-shadow-lg">
+                    <a href="{% url 'blog:detail' slug=blog.slug %}" class="image-box block overflow-hidden rounded-lg md:rounded-2xl">
+                        {% if blog.cover_image %}
+                        <img class="rounded-lg md:rounded-2xl max-h-56 w-full transition-transform duration-300 ease-in-out group-hover:rotate-3 group-hover:scale-110"
+                             src="{{ blog.cover_image.url }}"
+                             alt="{{ blog.title }}" />
+                        {% else %}
+                        <img class="rounded-lg md:rounded-2xl max-h-56 w-full transition-transform duration-300 ease-in-out group-hover:rotate-3 group-hover:scale-110"
+                             src="{{ media_url }}image/blog/default.jpg"
+                             alt="{{ blog.title }}" />
+                        {% endif %}
+                    </a>
+                    <div class="p-2 mt-2">
+                        <a href="{% url 'blog:detail' slug=blog.slug %}" class="text-xs md:text-sm font-normal md:font-semibold text-zinc-700 group-hover:text-primary-500 h-12 line-clamp-2 leading-6">
+                            {{ blog.title }}
+                        </a>
+                        <div class="flex justify-between mt-8">
+                            <div class="text-xs flex gap-x-1 items-center text-zinc-400">
+                                <svg class="fill-zinc-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="" viewBox="0 0 256 256">
+                                    <path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"></path>
+                                </svg>
+                                {{ blog.publish_at|date:"Y/m/d" }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-8 text-zinc-500">
+                    مقاله‌ای برای نمایش وجود ندارد.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

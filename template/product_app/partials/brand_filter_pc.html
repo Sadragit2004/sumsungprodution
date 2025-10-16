@@ -1,0 +1,29 @@
+<div class="border border-zinc-100 h-fit rounded-2xl py-2 hover:shadow-sm transition-all">
+    <button class="menu-toggle flex justify-between w-full py-3 px-4 rounded-2xl cursor-pointer">
+        <span class="text-zinc-700 text-sm">برند ها</span>
+        <img class="w-4 transition-transform opacity-80" src="{{ media_url }}image/icons/arrowDown.svg" alt="">
+    </button>
+
+    <ul class="submenu hidden mt-2">
+        {% for brand in brands %}
+        <li>
+            <div class="flex w-full items-center gap-x-2 py-1 px-4">
+                <input id="brand-{{ brand.id }}"
+                       type="checkbox"
+                       name="brand"
+                       value="{{ brand.id }}"
+                       class="filter-checkbox h-4 w-4 accent-primary-500 cursor-pointer rounded-xl border-gray-300 bg-gray-100"
+                       {% if brand.id in selected_brands %}checked{% endif %}>
+                <label for="brand-{{ brand.id }}" class="w-full cursor-pointer py-2 pl-4 text-zinc-600 text-xs">
+                    <span>
+                        {{ brand.title }}
+                        <span class="text-gray-400 text-[10px]">({{ brand.brand_count }})</span>
+                    </span>
+                </label>
+            </div>
+        </li>
+        {% empty %}
+        <li class="px-4 py-2 text-gray-400 text-xs">برندی یافت نشد</li>
+        {% endfor %}
+    </ul>
+</div>

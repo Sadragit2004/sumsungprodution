@@ -1,0 +1,29 @@
+{% load humanize %}
+<div class="border border-zinc-100 h-fit rounded-2xl py-2 hover:shadow-sm transition-all">
+    <button type="button" class="menu-toggle flex justify-between w-full py-3 px-4 rounded-2xl cursor-pointer">
+        <span class="text-zinc-700 text-sm">فیلتر بر اساس قیمت</span>
+        <img class="w-4 transition-transform opacity-80" src="{{ media_url }}image/icons/arrowDown.svg" alt="">
+    </button>
+
+    <ul class="submenu hidden mt-2">
+        <div class="space-y-4 px-6">
+            <div id="shop-price-slider"></div>
+            <div class="flex items-center justify-between">
+                <div class="text-primary-400">
+                    <span class="text-xs font-semibold xl:text-sm" id="shop-price-slider-min">
+                        {{ result_price.min_price|default:"0" |intcomma }}
+                    </span>
+                    <span class="text-xs">تومان</span>
+                </div>
+                <div class="text-primary-400">
+                    <span class="text-xs font-semibold xl:text-sm" id="shop-price-slider-max">
+                        {{ result_price.max_price|default:"0" |intcomma }}
+                    </span>
+                    <span class="text-xs">تومان</span>
+                </div>
+            </div>
+            <input type="hidden" id="min-price" name="price_min" value="{{ request.GET.price_min }}">
+            <input type="hidden" id="max-price" name="price_max" value="{{ request.GET.price_max }}">
+        </div>
+    </ul>
+</div>

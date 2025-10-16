@@ -1,0 +1,491 @@
+<style>
+.product-search-suggestions {
+  border: 1px solid #e5e7eb;
+}
+
+.product-suggestion-section {
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.product-suggestion-section:last-child {
+  border-bottom: none;
+}
+
+.product-suggestion-section-title {
+  padding: 0 16px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.product-suggestion-item:hover {
+  background-color: #f9fafb;
+}
+
+.product-suggestion-item.active {
+  background-color: #eff6ff;
+}
+
+.product-search-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-search-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-search-info {
+  flex: 1;
+}
+
+.product-search-title {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 2px;
+}
+
+.product-search-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.product-current-price {
+  font-weight: 600;
+  color: #059669;
+}
+
+.product-original-price {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.product-discount-badge {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.category-search-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-search-title {
+  font-size: 14px;
+  color: #374151;
+}
+
+.category-search-count {
+  font-size: 12px;
+  color: #6b7280;
+  margin-right: auto;
+}
+
+.popular-product-search-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popular-product-query {
+  font-size: 14px;
+  color: #374151;
+}
+
+.popular-product-count {
+  font-size: 12px;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.product-view-all {
+  color: #3b82f6;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.product-no-results {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.product-loading-indicator {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.product-highlight {
+  background-color: #fef3c7;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+</style>
+
+
+<!-- بخش جستجو برای موبایل -->
+<!-- بخش جستجو برای موبایل -->
+<div class="relative md:hidden">
+  <input
+    id="mobile-product-search-input"
+    class="product-search-input rounded-2xl text-zinc-700 bg-zinc-100 px-5 py-2.5 w-full placeholder:text-zinc-400 placeholder:text-xs focus:outline-0"
+    type="text"
+    placeholder="جستجو محصول ..."
+    autocomplete="off"
+  >
+  <button class="product-search-btn absolute top-2 left-3 z-50 text-white cursor-pointer">
+    <svg class="size-6 fill-zinc-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+      <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+    </svg>
+  </button>
+
+  <!-- پنل پیشنهادات -->
+  <div id="mobile-product-search-suggestions" class="product-search-suggestions hidden absolute top-full left-0 right-0 bg-white shadow-lg rounded-2xl mt-2 z-50 max-h-96 overflow-y-auto">
+    <!-- محتوای پیشنهادات به صورت داینامیک پر می‌شود -->
+  </div>
+</div>
+
+
+<script>
+class ProductSearchManager {
+  constructor() {
+    this.productInputs = document.querySelectorAll('.product-search-input');
+    this.productContainers = document.querySelectorAll('.product-search-suggestions');
+    this.productButtons = document.querySelectorAll('.product-search-btn');
+    this.productCurrentFocus = -1;
+    this.productDebounceTimer = null;
+    this.initProductSearch();
+  }
+
+  initProductSearch() {
+    // رویدادهای ورودی جستجو
+    this.productInputs.forEach(input => {
+      input.addEventListener('input', (e) => this.handleProductInput(e));
+      input.addEventListener('keydown', (e) => this.handleProductKeyDown(e));
+      input.addEventListener('focus', () => this.showProductSuggestions());
+    });
+
+    // رویداد کلیک دکمه جستجو
+    this.productButtons.forEach(button => {
+      button.addEventListener('click', () => this.performProductSearch());
+    });
+
+    // رویداد کلیک خارج از جستجو
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.product-search-input') && !e.target.closest('.product-search-suggestions')) {
+        this.hideProductSuggestions();
+      }
+    });
+  }
+
+  handleProductInput(e) {
+    const query = e.target.value.trim();
+
+    // پاک کردن تایمر قبلی
+    clearTimeout(this.productDebounceTimer);
+
+    if (query.length < 2) {
+      this.hideProductSuggestions();
+      return;
+    }
+
+    // تاخیر برای جلوگیری از درخواست‌های زیاد
+    this.productDebounceTimer = setTimeout(() => {
+      this.fetchProductSuggestions(query);
+    }, 300);
+  }
+
+  handleProductKeyDown(e) {
+    const suggestions = this.getActiveProductSuggestions();
+    if (!suggestions) return;
+
+    const items = suggestions.querySelectorAll('.product-suggestion-item');
+
+    switch(e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this.productCurrentFocus = Math.min(this.productCurrentFocus + 1, items.length - 1);
+        this.updateProductActiveItem(items);
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        this.productCurrentFocus = Math.max(this.productCurrentFocus - 1, -1);
+        this.updateProductActiveItem(items);
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (this.productCurrentFocus > -1 && items[this.productCurrentFocus]) {
+          items[this.productCurrentFocus].click();
+        } else {
+          this.performProductSearch();
+        }
+        break;
+
+      case 'Escape':
+        this.hideProductSuggestions();
+        break;
+    }
+  }
+
+  updateProductActiveItem(items) {
+    // حذف کلاس active از همه آیتم‌ها
+    items.forEach(item => item.classList.remove('active'));
+
+    // اضافه کردن کلاس active به آیتم انتخاب شده
+    if (this.productCurrentFocus > -1 && items[this.productCurrentFocus]) {
+      items[this.productCurrentFocus].classList.add('active');
+      items[this.productCurrentFocus].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  getActiveProductSuggestions() {
+    const activeInput = document.activeElement;
+    if (activeInput.id === 'mobile-product-search-input') {
+      return document.getElementById('mobile-product-search-suggestions');
+    } else if (activeInput.id === 'desktop-product-search-input') {
+      return document.getElementById('desktop-product-search-suggestions');
+    }
+    return null;
+  }
+
+  async fetchProductSuggestions(query) {
+    const suggestionsContainer = this.getActiveProductSuggestions();
+    if (!suggestionsContainer) return;
+
+    // نمایش وضعیت لودینگ
+    suggestionsContainer.innerHTML = `
+      <div class="product-loading-indicator">
+        در حال جستجو...
+      </div>
+    `;
+    this.showProductSuggestions();
+
+    try {
+      const response = await fetch(`/search/suggestions/?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+
+      this.renderProductSuggestions(data, query, suggestionsContainer);
+    } catch (error) {
+      console.error('Error fetching product search suggestions:', error);
+      suggestionsContainer.innerHTML = `
+        <div class="product-no-results">
+          خطا در دریافت پیشنهادات
+        </div>
+      `;
+    }
+  }
+
+  renderProductSuggestions(data, query, container) {
+    if (data.total_products === 0 && data.total_categories === 0 && data.popular_searches.length === 0) {
+      container.innerHTML = `
+        <div class="product-no-results">
+          هیچ نتیجه‌ای برای "${this.escapeProductHtml(query)}" یافت نشد
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+
+    // بخش محصولات
+    if (data.products.length > 0) {
+      html += `
+        <div class="product-suggestion-section">
+          <div class="product-suggestion-section-title">
+            <span>محصولات</span>
+            ${data.total_products > data.products.length ?
+              `<span class="product-view-all" onclick="productSearchManager.viewAllProductResults('${this.escapeProductHtml(query)}', 'products')">
+                مشاهده همه (${data.total_products})
+              </span>` : ''
+            }
+          </div>
+          ${data.products.map(product => this.renderProductSearchResult(product, query)).join('')}
+        </div>
+      `;
+    }
+
+    // بخش دسته‌بندی‌ها
+    if (data.categories.length > 0) {
+      html += `
+        <div class="product-suggestion-section">
+          <div class="product-suggestion-section-title">
+            <span>دسته‌بندی‌ها</span>
+            ${data.total_categories > data.categories.length ?
+              `<span class="product-view-all" onclick="productSearchManager.viewAllProductResults('${this.escapeProductHtml(query)}', 'categories')">
+                مشاهده همه (${data.total_categories})
+              </span>` : ''
+            }
+          </div>
+          ${data.categories.map(category => this.renderCategorySearchResult(category, query)).join('')}
+        </div>
+      `;
+    }
+
+    // بخش جستجوهای پرتکرار
+    if (data.popular_searches.length > 0) {
+      html += `
+        <div class="product-suggestion-section">
+          <div class="product-suggestion-section-title">
+            <span>جستجوهای پرطرفدار</span>
+          </div>
+          ${data.popular_searches.map(search => this.renderPopularProductSearch(search)).join('')}
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+    this.productCurrentFocus = -1;
+  }
+
+  renderProductSearchResult(product, query) {
+    const highlightedTitle = this.highlightProductText(product.title, query);
+    const hasDiscount = product.has_discount && product.discount_percentage > 0;
+
+    return `
+      <div class="product-suggestion-item product-search-result"
+           onclick="productSearchManager.selectProductItem(${product.id}, '${this.escapeProductHtml(product.slug)}')">
+        <img src="${product.image_url || '/static/images/placeholder.jpg'}"
+             alt="${product.title}"
+             class="product-search-image"
+             onerror="this.src='/static/images/placeholder.jpg'">
+        <div class="product-search-info">
+          <div class="product-search-title">${highlightedTitle}</div>
+          <div class="product-search-price">
+            <span class="product-current-price">${this.formatProductPrice(product.final_price)} تومان</span>
+            ${hasDiscount ? `
+              <span class="product-original-price">${this.formatProductPrice(product.price)} تومان</span>
+              <span class="product-discount-badge">${product.discount_percentage}%</span>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderCategorySearchResult(category, query) {
+    const highlightedTitle = this.highlightProductText(category.title, query);
+
+    return `
+      <div class="product-suggestion-item category-search-result"
+           onclick="productSearchManager.selectCategoryItem('${this.escapeProductHtml(category.slug)}')">
+        <img src="${category.image_url || '/static/images/category-placeholder.jpg'}"
+             alt="${category.title}"
+             class="product-search-image"
+             onerror="this.src='/static/images/category-placeholder.jpg'">
+        <span class="category-search-title">${highlightedTitle}</span>
+        <span class="category-search-count">${category.product_count} محصول</span>
+      </div>
+    `;
+  }
+
+  renderPopularProductSearch(search) {
+    return `
+      <div class="product-suggestion-item popular-product-search-item"
+           onclick="productSearchManager.selectPopularProductSearch('${this.escapeProductHtml(search.query)}')">
+        <svg class="size-4 fill-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+          <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+        </svg>
+        <span class="popular-product-query">${this.escapeProductHtml(search.query)}</span>
+        <span class="popular-product-count">${search.count}</span>
+      </div>
+    `;
+  }
+
+  highlightProductText(text, query) {
+    if (!query) return this.escapeProductHtml(text);
+
+    const regex = new RegExp(`(${this.escapeProductRegex(query)})`, 'gi');
+    return this.escapeProductHtml(text).replace(regex, '<mark class="product-highlight">$1</mark>');
+  }
+
+  escapeProductHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  escapeProductRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  formatProductPrice(price) {
+    return new Intl.NumberFormat('fa-IR').format(price);
+  }
+
+  showProductSuggestions() {
+    const container = this.getActiveProductSuggestions();
+    if (container) {
+      container.classList.remove('hidden');
+    }
+  }
+
+  hideProductSuggestions() {
+    this.productContainers.forEach(container => {
+      container.classList.add('hidden');
+    });
+    this.productCurrentFocus = -1;
+  }
+
+  // متدهای انتخاب آیتم‌ها
+  selectProductItem(productId, slug) {
+    window.location.href = `/product/${slug}/`;
+  }
+
+  selectCategoryItem(slug) {
+    window.location.href = `/product/category/${slug}/`;
+  }
+
+  selectPopularProductSearch(query) {
+    const activeInput = document.activeElement;
+    if (activeInput) {
+      activeInput.value = query;
+      this.fetchProductSuggestions(query);
+    }
+  }
+
+  viewAllProductResults(query, type) {
+    window.location.href = `/search/results/?q=${encodeURIComponent(query)}${type === 'categories' ? '&view=categories' : ''}`;
+  }
+
+  performProductSearch() {
+    const activeInput = document.activeElement;
+    if (activeInput && activeInput.value.trim()) {
+      window.location.href = `/search/results/?q=${encodeURIComponent(activeInput.value.trim())}`;
+    }
+  }
+}
+
+// مقداردهی اولیه
+const productSearchManager = new ProductSearchManager();
+</script>

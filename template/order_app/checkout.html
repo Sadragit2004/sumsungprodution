@@ -1,0 +1,203 @@
+{% extends "main_template.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<main class="pt-24 md:pt-48 px-2 md:px-10">
+    <nav class="flex items-center gap-1 md:gap-5 w-full md:w-10/12 md:mx-auto">
+        <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-green-500 text-sm" href="{% url 'order:cart_page' %}">
+            <!-- آیکون سبد خرید -->
+            سبدخرید
+        </a>
+        <div class="h-0.5 w-full bg-gradient-to-r from-white via-zinc-300 to-white"></div>
+        <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-primary-500 text-sm" href="#">
+            <!-- آیکون اطلاعات پرداخت -->
+            اطلاعات پرداخت
+        </a>
+        <div class="h-0.5 w-full bg-gradient-to-r from-white via-zinc-300 to-white"></div>
+        <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-zinc-700 text-sm" href="#">
+            <!-- آیکون اتمام خرید -->
+            اتمام خرید
+        </a>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row px-4 md:px-20 mt-10 gap-5 pb-20">
+        <div class="lg:w-9/12 border border-zinc-200 rounded-xl p-5">
+            <div class="flex justify-end items-center">
+          <button style='background:#333;' id="userLocationDisplay"  onclick="openLocationModal()"
+     role="button"
+     aria-label="انتخاب شهر"   class="bg-zinc-400 hover:opacity-90 hover:shadow-lg transition rounded-lg px-4 py-2.5 text-sm text-white">
+             <span style='color:#ffff;' id="currentLocationText" style="margin-right:6px; white-space:nowrap;">انتخاب شهر</span>
+          </button>
+        </div>
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="sm:flex gap-x-5">
+                    <div class="sm:w-1/2 mb-2 sm:mb-0 flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            نام
+                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256"><path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path></svg>
+                        </label>
+                        <input name="first_name"
+                               value="{{ checkout_data.first_name }}"
+                               class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300"
+                               type="text"
+                               placeholder="نام"
+                               required>
+                    </div>
+                    <div class="sm:w-1/2 flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            نام خانوادگی
+                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256"><path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path></svg>
+                        </label>
+                        <input name="last_name"
+                               value="{{ checkout_data.last_name }}"
+                               class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300"
+                               type="text"
+                               placeholder="نام خانوادگی"
+                               required>
+                    </div>
+                </div>
+
+                <div class="mt-7">
+                    <div class="flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            آدرس دقیق
+                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256"><path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path></svg>
+                        </label>
+                        <textarea name="address_detail"
+                                  class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300"
+                                  placeholder="آدرس کامل شامل استان، شهر، خیابان، کوچه، پلاک، واحد"
+                                  required>{% if checkout_data.address_detail %}{{ checkout_data.address_detail }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div class="sm:flex gap-x-5 mt-5">
+                    <div class="sm:w-1/2 mb-2 sm:mb-0 flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            تلفن
+                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256"><path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path></svg>
+                        </label>
+                        <input name="phone"
+                               value="{{ checkout_data.phone|default:request.user.mobileNumber }}"
+                               class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300"
+                               type="text"
+                               placeholder="تلفن همراه"
+                               required>
+                    </div>
+                    <div class="sm:w-1/2 flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            کد پستی
+                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256"><path d="M210.23,101.57l-72.6,29,51.11,65.71a6,6,0,0,1-9.48,7.36L128,137.77,76.74,203.68a6,6,0,1,1-9.48-7.36l51.11-65.71-72.6-29a6,6,0,1,1,4.46-11.14L122,119.14V40a6,6,0,0,1,12,0v79.14l71.77-28.71a6,6,0,1,1,4.46,11.14Z"></path></svg>
+                        </label>
+                        <input name="postal_code"
+                               value="{{ checkout_data.postal_code|default:'' }}"
+                               class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300"
+                               type="text"
+                               placeholder="کد پستی"
+                               required>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex flex-col gap-y-1">
+                        <label class="text-zinc-700 flex">
+                            توضیحات اضافه
+                        </label>
+                        <textarea name="description"
+                                  placeholder="نکات مهم درباره تحویل محصول"
+                                  class="rounded-2xl text-sm text-zinc-600 w-full border border-zinc-200 px-5 py-3.5 placeholder:text-zinc-400 placeholder:text-xs focus:outline-1 focus:outline-primary-300 focus:border-primary-300">{% if checkout_data.description %}{{ checkout_data.description }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div class="mb-5 mt-10">
+                    <div class="flex gap-x-1 items-center text-zinc-700 border-b pb-2 mb-4">
+                        هزینه ارسال
+                    </div>
+                    <div class="text-center py-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-600">هزینه ارسال پس از رسیدن کالا توسط خودتان محاسبه خواهد شد</p>
+                    </div>
+                </div>
+
+               <!-- قبلا: <a href="{% url 'peyment:request' order_id=order.id %}" ...>ثبت و پرداخت</a> -->
+<button type="submit" name="action" value="pay"
+        class="w-full bg-primary-500 hover:bg-primary-400 text-white text-center mt-10 px-5 py-4 rounded-xl shadow-lg transition-all font-yekanBakhBold text-lg">
+    ثبت و پرداخت
+</button>
+
+            </form>
+        </div>
+
+        <div class="lg:w-3/12 lg:pt-5 my-10 lg:my-0">
+            <div class="border border-zinc-200 rounded-xl p-5">
+                <div class="flex justify-between items-center text-primary-500 mb-4">
+                    <div class="text-lg font-bold">خلاصه سفارش</div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- جمع مبلغ کل -->
+                    <div class="flex justify-between items-center text-zinc-600">
+                        <div class="text-sm">جمع مبلغ کل:</div>
+                        <div class="flex items-center">
+                            <div class="text-lg">{{ order.getTotalPrice|intcomma }}</div>
+                            <div class="text-xs mr-1">تومان</div>
+                        </div>
+                    </div>
+
+                    <!-- تخفیف -->
+                    {% if order.discount > 0 %}
+                    <div class="flex justify-between items-center text-green-600">
+                        <div class="text-sm">تخفیف:</div>
+                        <div class="flex items-center">
+                            <div class="text-lg">-{{ order.discount }}%</div>
+                            <div class="text-xs mr-1">({{ order.getTotalPrice|add:"-"|add:order.getFinalPrice|intcomma }} تومان)</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- مبلغ بعد از تخفیف -->
+                    <div class="flex justify-between items-center text-zinc-600">
+                        <div class="text-sm">مبلغ بعد از تخفیف:</div>
+                        <div class="flex items-center">
+                            <div class="text-lg">{{ order.getFinalPrice|intcomma }}</div>
+                            <div class="text-xs mr-1">تومان</div>
+                        </div>
+                    </div>
+
+                    <!-- مالیات 9 درصد -->
+                    <div class="flex justify-between items-center text-zinc-600">
+                        <div class="text-sm">مالیات ({{ tax_rate }}%):</div>
+                        <div class="flex items-center">
+                            <div class="text-lg">{{ tax_amount|intcomma }}</div>
+                            <div class="text-xs mr-1">تومان</div>
+                        </div>
+                    </div>
+
+                    <!-- هزینه ارسال -->
+                    <div class="flex justify-between items-center text-zinc-600 border-t pt-3">
+                        <div class="text-sm">هزینه ارسال:</div>
+                        <div class="flex items-center">
+                            <div class="text-sm text-gray-500">پس از تحویل</div>
+                        </div>
+                    </div>
+
+                    <!-- مبلغ نهایی با مالیات -->
+                    <div class="flex justify-between items-center text-primary-500 border-t pt-3 mt-3">
+                        <div class="text-lg font-bold">مبلغ قابل پرداخت:</div>
+                        <div class="flex items-center">
+                            <div class="text-2xl font-bold">{{ final_price_with_tax|intcomma }}</div>
+                            <div class="text-sm mr-1">تومان</div>
+                        </div>
+                    </div>
+
+                    <!-- نکته درباره مالیات -->
+                    <div class="text-xs text-gray-500 mt-2 text-center">
+                        * مبلغ {{ tax_amount|intcomma }} تومان مالیات بر ارزش افزوده به صورت جداگانه محاسبه شده است
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

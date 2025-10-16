@@ -1,0 +1,6 @@
+<svg style="filter: drop-shadow( 0 -7px 25px rgba(0, 0, 0, .3) );" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 480 110" width="480" height="110">
+    <defs>
+        <path d="M-607 -202L1073 -202L1073 0C679.8 0 461.36 0 417.67 0C368 0 358 50 327.34 50C310.37 50 174.64 50 157.67 50C128 50 118 0 67 0C22.07 0 -202.6 0 -607 0L-607 -202Z" id="dixoAXFOW"></path>
+    </defs>
+    <use xlink:href="#dixoAXFOW" opacity="1" fill="#ffffff" fill-opacity="1"></use>
+</svg>

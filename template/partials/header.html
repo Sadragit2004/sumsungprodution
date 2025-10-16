@@ -1,0 +1,347 @@
+<style>
+/* کانتینر منوی کاربر */
+.user-menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* دکمه اصلی */
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.user-menu-btn:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.user-menu-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.user-menu-btn span {
+    font-size: 14px;
+    color: #3f3f46;
+}
+
+/* دراپ‌داون */
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 240px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.user-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown ul {
+    list-style: none;
+}
+
+.user-dropdown li {
+    margin-bottom: 4px;
+}
+
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #3f3f46;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.user-dropdown a:hover {
+    background: #f4f4f5;
+    color: #18181b;
+}
+
+.user-dropdown a.logout {
+    color: #ef4444;
+}
+
+.user-dropdown a.logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* دکمه ورود/ثبت نام */
+.login-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    color: #3f3f46;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.login-btn:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+    .user-menu-btn span {
+        display: none;
+    }
+
+    /* استایل دکمه ورود در موبایل */
+    .login-btn {
+        padding: 10px 16px;
+        min-width: auto;
+    }
+
+    .login-btn span {
+        display: inline;
+        font-size: 14px;
+    }
+}
+
+</style>
+
+<header class="max-w-[1700px] fixed w-full z-50 flex md:block bg-white md:bg-transparent">
+    <!-- top -->
+    <div class="flex items-center justify-between bg-white px-4 md:px-8 lg:px-20 py-5 shadow-lg relative order-2 md:order-none w-full border-b border-zinc-200">
+      <!-- logo -->
+      <a href="/" class="flex justify-end md:justify-center z-10 pl-2 md:pl-0">
+        <img src="{{media_url}}image/logo.png" class="max-w-28 md:max-w-36 h-fit" alt="لوگو در هدر">
+      </a>
+      <!-- icon -->
+      <svg class="hidden md:block absolute top-full md:right-4 lg:right-10" width="158" height="19" viewBox="0 0 158 19" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_4623_10410)">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M101.486 -121.419C121.078 -114.984 140.312 -105 160.935 -105H506.5C535.495 -105 559 -81.4949 559 -52.5V-52.5C559 -23.5051 535.495 0 506.5 0H158.936C138.871 0 120.093 9.46189 100.984 15.5822C94.0537 17.8017 86.6668 19 79 19C71.3332 19 63.9463 17.8017 57.0164 15.5822C37.9074 9.46189 19.1287 0 -0.936457 0H-1468.5C-1497.49 0 -1521 -23.5051 -1521 -52.5V-52.5C-1521 -81.4949 -1497.49 -105 -1468.5 -105H-2.93493C17.6877 -105 36.9216 -114.984 56.5145 -121.419C63.5893 -123.743 71.1478 -125 79 -125C86.8522 -125 94.4107 -123.743 101.486 -121.419Z" fill="white"></path>
+        </g>
+        <defs>
+        <clipPath id="clip0_4623_10410">
+        <rect width="158" height="19" fill="white"></rect>
+        </clipPath>
+        </defs>
+      </svg>
+
+      {% include "partials/search_header.html" %}
+
+      <div class="flex gap-x-2">
+        <!-- login / register -->
+        <div class="user-menu-wrapper">
+            {% if user.is_authenticated %}
+                <!-- دکمه اصلی -->
+                <button class="user-menu-btn" onclick="toggleUserMenu()">
+                    <span>حساب کاربری</span>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g transform="translate(4,2.5)" stroke="#200E32" stroke-width="1.5">
+                                <circle cx="7.57" cy="4.77" r="4.77"></circle>
+                                <path d="M0,16.2 C0,15.86 0.07,15.53 0.22,15.23 C0.67,14.31 1.96,13.83 3.03,13.61 C3.81,13.44 4.59,13.33 5.38,13.28 C6.84,13.15 8.3,13.15 9.77,13.28 C10.55,13.33 11.34,13.44 12.11,13.61 C13.18,13.83 14.47,14.27 14.92,15.23 C15.22,15.84 15.22,16.56 14.92,17.18 C14.47,18.14 13.18,18.58 12.11,18.79 C11.33,18.96 10.55,19.07 9.77,19.13 C8.57,19.23 7.38,19.25 6.19,19.18 C5.92,19.18 5.65,19.18 5.38,19.13 C4.59,19.07 3.81,18.96 3.04,18.79 C1.96,18.58 0.68,18.14 0.22,17.18 C0.07,16.87 0,16.54 0,16.2 Z"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+
+                <!-- منوی دراپ‌داون -->
+                <div class="user-dropdown" id="userDropdown">
+                    <ul>
+                        <li>
+                            <a href="{% url 'panel:dashboard' %}">
+                                <span>{{ user.name }} {{user.family}}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'panel:orders' %}">
+                                <span>سفارش‌ها</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user:logout' %}" class="logout">
+                                <span>خروج از حساب کاربری</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <!-- دکمه ورود/ثبت نام -->
+                <a href="{% url 'user:send_mobile' %}" class="login-btn">
+                    <span>ورود </span>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="relative group">
+          <div class="flex items-center py-2 px-2.5 rounded-xl border border-zinc-200 cursor-pointer transition-all hover:shadow-xl">
+            <button class="relative">
+              <!-- شمارنده محصولات -->
+              <div id="cart-counter" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transition-all duration-300">
+                0
+              </div>
+
+              <span class="cursor-pointer">
+                <svg width="22px" height="22px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <g id="Iconly/Light/Bag" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g class="stroke-gray-800" id="Bag" transform="translate(2.500000, 1.500000)" stroke="#200E32" stroke-width="1.5">
+                      <path d="M14.01373,20.0000001 L5.66590392,20.0000001 C2.59954235,20.0000001 0.247139589,18.8924486 0.915331812,14.4347827 L1.69336385,8.39359272 C2.10526317,6.16933642 3.52402748,5.31807783 4.76887874,5.31807783 L14.9473685,5.31807783 C16.2105264,5.31807783 17.5469108,6.23340964 18.0228834,8.39359272 L18.8009154,14.4347827 C19.3684211,18.3890161 17.0800916,20.0000001 14.01373,20.0000001 Z" id="Path_33955"></path>
+                      <path d="M14.1510298,5.09839819 C14.1510298,2.71232585 12.216736,0.7779932 9.83066366,0.7779932 L9.83066366,0.7779932 C8.68166274,0.773163349 7.57805185,1.22619323 6.76386233,2.03694736 C5.9496728,2.84770148 5.49199087,3.94938696 5.49199087,5.09839819 L5.49199087,5.09839819" id="Path_33956"></path>
+                      <line x1="12.7963387" y1="9.60183071" x2="12.7505721" y2="9.60183071" id="Line_192"></line>
+                      <line x1="6.96567509" y1="9.60183071" x2="6.9199085" y2="9.60183071" id="Line_193"></line>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <!-- محتوای سبد خرید -->
+          <div class="cart-dropdown absolute left-0 md:left-auto md:right-0 top-full mt-3 w-80 md:w-96 rounded-lg bg-white shadow-2xl border border-gray-200">
+            <!-- هدر سبد خرید -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+              <div class="text-sm text-gray-600">
+                <span id="cart-items-count">0</span> کالا
+              </div>
+              <button class="text-xs text-red-500 hover:text-red-700 transition-colors" onclick="clearCart()">
+                پاک کردن همه
+              </button>
+              <a style='color:#333;' href='{% url "order:cart_page" %}' class="text-xs text-red-500 hover:text-red-700 transition-colors">
+                مشاهده سبد خرید
+              </a>
+            </div>
+
+            <!-- لیست محصولات -->
+            <div class="max-h-60 overflow-y-auto">
+              <div id="cart-items-container" class="p-4 space-y-4">
+                <div class="text-center py-8 text-gray-500">
+                  سبد خرید شما خالی است
+                </div>
+              </div>
+            </div>
+
+            <!-- پایین سبد خرید -->
+            <div class="p-4 border-t border-gray-200">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-sm text-gray-600">مبلغ قابل پرداخت</span>
+                <span id="cart-total-price" class="font-medium text-gray-800">0 تومان</span>
+              </div>
+              <a href="{% url 'order:createOrder' %}" class="block w-full py-3 text-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                ثبت سفارش
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- down -->
+    <div class="bg-white shadow-lg lg:shadow-none lg:bg-zinc-50 px-4 md:px-8 lg:px-20 pt-7 pb-5 flex justify-between order-1 md:order-none md:shadow-custom">
+      <div class="flex justify-between items-center gap-x-5 w-full md:w-auto">
+        <svg class="md:hidden menu-mobile fill-zinc-600" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+        <div id="overlay" class="fixed z-10 inset-0 bg-black/35 hidden transition-opacity duration-300"></div>
+        <ul id="mobile-menu"
+          class="z-20 fixed md:static top-0 right-0 md:right-auto w-10/12 md:w-auto h-full md:h-auto font-yekanBakhRegular bg-white md:bg-transparent shadow-lg md:shadow-none transform md:translate-x-0 translate-x-full transition-transform duration-300 ease-in-out
+          flex flex-col md:flex-row gap-y-8 md:gap-x-5 xl:gap-x-10 text-sm p-5 md:p-0 overflow-y-auto md:overflow-visible">
+          <li>
+            <!-- search -->
+         {% include "partials/search_mobile.html" %}
+          </li>
+          <li>
+            <a href="/" class="py-2 md:py-0 md:hover:bg-transparent md:rounded-none transition-all">
+              <span class="text-zinc-800 hover:text-primary-500 transition-all">صفحه اصلی</span>
+            </a>
+          </li>
+          <div class="relative inline-block group">
+            <a href="#" class="flex gap-x-2 items-center group relative">
+              <li class="relative text-zinc-800 hover:text-primary-500 transition-all pb-2">
+                محصولات
+              </li>
+              <svg class="group-hover:rotate-180 transition-all duration-300 fill-zinc-600 mb-2 group-hover:fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#000000" viewBox="0 0 256 256">
+                <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
+              </svg>
+            </a>
+           {% include "product_app/header_group_product.html" %}
+          </div>
+          <li>
+            <a href="{% url 'main:about' %}" class="py-2 md:py-0 md:hover:bg-transparent md:rounded-none transition-all">
+              <span class="text-zinc-800 hover:text-primary-500 transition-all">درباره ما</span>
+            </a>
+          </li>
+
+
+          <li>
+            <a href="{% url 'main:call' %}" class="py-2 md:py-0 md:hover:bg-transparent md:rounded-none transition-all">
+              <span class="text-zinc-800 hover:text-primary-500 transition-all">تماس با ما</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'blog:list' %}" class="py-2 md:py-0 md:hover:bg-transparent md:rounded-none transition-all">
+              <span class="text-zinc-800 hover:text-primary-500 transition-all">بلاگ</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'product:all_drives' %}" class="py-2 md:py-0 md:hover:bg-transparent md:rounded-none transition-all">
+              <span style='background:orange; color:#ffff; padding:10px; border-radius: 20px;' class="text-zinc-800 hover:text-primary-500 transition-all">درایور ها</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="hidden md:flex items-center gap-x-2 lg:gap-x-3">
+       {% if request.path == '/' %}
+  <h1 class="text-zinc-400 text-xs">سامسونگ مرکزی آذربایجان</h1>
+{% else %}
+  <span title="پشتیبانی" class="text-zinc-400 text-xs cursor-help">پشتیبانی</span>
+{% endif %}
+
+        <div class="text-zinc-300">
+          |
+        </div>
+        <a href="tel:05144556677" class="text-zinc-600 flex text-xs gap-x-1.5 items-center">
+            051-44556677
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path class="stroke-primary-500" d="M3 18V12C3 9.61305 3.94821 7.32387 5.63604 5.63604C7.32387 3.94821 9.61305 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12V18" stroke="#52525c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-primary-500" d="M21 19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H18C17.4696 21 16.9609 20.7893 16.5858 20.4142C16.2107 20.0391 16 19.5304 16 19V16C16 15.4696 16.2107 14.9609 16.5858 14.5858C16.9609 14.2107 17.4696 14 18 14H21V19ZM3 19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H6C6.53043 21 7.03914 20.7893 7.41421 20.4142C7.78929 20.0391 8 19.5304 8 19V16C8 15.4696 7.78929 14.9609 7.41421 14.5858C7.03914 14.2107 6.53043 14 6 14H3V19Z" stroke="#52525c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+<script>
+function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('active');
+}
+
+// بستن منو با کلیک خارج از آن
+document.addEventListener('click', function(event) {
+    const wrapper = document.querySelector('.user-menu-wrapper');
+    const dropdown = document.getElementById('userDropdown');
+
+    if (wrapper && !wrapper.contains(event.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+</script>

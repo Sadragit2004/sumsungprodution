@@ -1,0 +1,49 @@
+{% load static %}
+<div class="mt-12 md:mt-20">
+    <!-- top slider -->
+    <div class="flex gap-x-4 justify-between items-center mb-7">
+        <div class="w-48 min-w-fit text-zinc-700 text-sm md:text-base md:font-yekanBakhBold">
+            برترین برند ها
+        </div>
+        <div class="h-[1px] w-full bg-gradient-to-r from-white via-zinc-300 to-white">
+        </div>
+        <div class="w-32 min-w-fit text-left">
+            <a href="" class="group transition flex items-center justify-center gap-x-1 md:gap-x-2 text-zinc-600 hover:text-primary-500 text-xs md:text-sm text-center">
+                مشاهده همه
+                <svg class="fill-zinc-600 group-hover:-translate-x-1 transition group-hover:fill-primary-500 size-2.5 md:size-3" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="" viewBox="0 0 256 256">
+                    <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- main slider -->
+    <div class="containerPSlider swiper">
+        <div class="brands">
+            <div class="card-wrapper swiper-wrapper pb-10">
+                {% for brand in brands %}
+                <div class="card swiper-slide shiny">
+                    <a href="{% url 'product:brand' slug=brand.slug %}" class="flex flex-col justify-between items-center gap-3 w-full h-36 md:h-48 md:px-4 border border-zinc-100 rounded-2xl hover:shadow-lg transition">
+                        <div class="w-full h-44 flex justify-center items-center">
+                            {% if brand.image %}
+                                <img class="max-w-24 md:max-w-32 w-full mx-auto" src="{{ brand.image.url }}" alt="{{ brand.title }}">
+                            {% else %}
+                                <div class="max-w-24 md:max-w-32 w-full mx-auto flex items-center justify-center bg-gray-100 rounded-lg h-24">
+                                    <span class="text-zinc-400 text-xs">{{ brand.title }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs md:text-sm text-zinc-700 h-16 text-center px-2">
+                            {{ brand.title }}
+                        </p>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-8 text-zinc-500">
+                    هیچ برندی یافت نشد
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

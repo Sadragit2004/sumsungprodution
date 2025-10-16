@@ -1,0 +1,236 @@
+{% extends "main_template.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<main class="pt-24 md:pt-48 px-2 md:px-10">
+    <div class="px-2 md:px-12">
+        <nav class="flex items-center gap-1 md:gap-5 w-full md:w-10/12 md:mx-auto mt-2 md:mt-0">
+            <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-primary-500 text-sm" href="{% url 'order:cart_page' %}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="fill-primary-500" fill-rule="evenodd" clip-rule="evenodd" d="M3.03998 2.292C2.85221 2.22609 2.64595 2.23748 2.46657 2.32365C2.28719 2.40982 2.14939 2.56373 2.08348 2.7515C2.01758 2.93927 2.02896 3.14554 2.11513 3.32491C2.20131 3.50429 2.35521 3.64209 2.54298 3.708L2.80398 3.799C3.47198 4.034 3.91098 4.189 4.23398 4.348C4.53698 4.497 4.66998 4.618 4.75798 4.746C4.84798 4.878 4.91798 5.06 4.95798 5.423C4.99798 5.803 4.99998 6.298 4.99998 7.038V9.64C4.99998 12.582 5.06298 13.552 5.92998 14.466C6.79598 15.38 8.18998 15.38 10.98 15.38H16.282C17.843 15.38 18.624 15.38 19.175 14.93C19.727 14.48 19.885 13.716 20.2 12.188L20.7 9.763C21.047 8.023 21.22 7.154 20.776 6.577C20.332 6 18.816 6 17.131 6H6.49198C6.48776 5.75351 6.47342 5.50731 6.44898 5.262C6.39498 4.765 6.27898 4.312 5.99698 3.9C5.71298 3.484 5.33498 3.218 4.89398 3.001C4.48198 2.799 3.95798 2.615 3.34198 2.398L3.03998 2.292ZM15.517 8.457C15.817 8.743 15.829 9.217 15.543 9.517L12.686 12.517C12.6159 12.5905 12.5317 12.649 12.4384 12.689C12.345 12.729 12.2445 12.7496 12.143 12.7496C12.0414 12.7496 11.9409 12.729 11.8476 12.689C11.7543 12.649 11.67 12.5905 11.6 12.517L10.457 11.317C10.3861 11.2463 10.3302 11.1621 10.2924 11.0694C10.2546 10.9767 10.2357 10.8774 10.2369 10.7773C10.2381 10.6773 10.2593 10.5784 10.2993 10.4867C10.3393 10.3949 10.3972 10.3121 10.4697 10.243C10.5422 10.174 10.6278 10.1202 10.7214 10.0848C10.815 10.0494 10.9147 10.033 11.0148 10.0367C11.1148 10.0405 11.2131 10.0642 11.3038 10.1065C11.3945 10.1488 11.4758 10.2088 11.543 10.283L12.143 10.913L14.457 8.483C14.5941 8.33904 14.7828 8.25544 14.9816 8.25057C15.1804 8.24569 15.3729 8.31994 15.517 8.457Z" fill="black"></path>
+                    <path class="fill-primary-500" d="M7.5 18C7.89782 18 8.27936 18.158 8.56066 18.4393C8.84196 18.7206 9 19.1022 9 19.5C9 19.8978 8.84196 20.2794 8.56066 20.5607C8.27936 20.842 7.89782 21 7.5 21C7.10218 21 6.72064 20.842 6.43934 20.5607C6.15804 20.2794 6 19.8978 6 19.5C6 19.1022 6.15804 18.7206 6.43934 18.4393C6.72064 18.158 7.10218 18 7.5 18ZM16.5 18C16.8978 18 17.2794 18.158 17.5607 18.4393C17.842 18.7206 18 19.1022 18 19.5C18 19.8978 17.842 20.2794 17.5607 20.5607C17.2794 20.842 16.8978 21 16.5 21C16.1022 21 15.7206 20.842 15.4393 20.5607C15.158 20.2794 15 19.8978 15 19.5C15 19.1022 15.158 18.7206 15.4393 18.4393C15.7206 18.158 16.1022 18 16.5 18Z" fill="black"></path>
+                    <path class="stroke-primary-500" d="M15.0742 8.8568C14.9303 8.87118 14.8255 9.10815 14.7562 9.22021C14.6354 9.41529 14.5162 9.57762 14.3665 9.75099C14.0074 10.1667 13.4839 10.4894 13.0467 10.8173C12.7359 11.0504 12.3724 11.3453 12.0162 11.5011C11.6944 11.6419 11.3865 11.1364 11.244 10.9225" stroke="black" stroke-width="3" stroke-linecap="round"></path>
+                </svg>
+                سبدخرید
+            </a>
+            <div class="h-0.5 w-full bg-gradient-to-r from-white via-zinc-300 to-white"></div>
+            <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-zinc-700 text-sm" href="#">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="fill-zinc-700" d="M12 10C14.2091 10 16 8.20914 16 6C16 3.79086 14.2091 2 12 2C9.79086 2 8 3.79086 8 6C8 8.20914 9.79086 10 12 10Z" fill="black"></path>
+                    <path class="fill-zinc-700" d="M20 17.5C20 19.985 20 22 12 22C4 22 4 19.985 4 17.5C4 15.015 7.582 13 12 13C16.418 13 20 15.015 20 17.5Z" fill="black"></path>
+                </svg>
+                اطلاعات پرداخت
+            </a>
+            <div class="h-0.5 w-full bg-gradient-to-r from-white via-zinc-300 to-white"></div>
+            <a class="flex flex-col md:flex-row items-center w-fit min-w-24 md:min-w-32 gap-1 text-zinc-700 text-sm" href="#">
+                <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="stroke-zinc-700" d="M20.5312 5.625H6.46875C4.60479 5.625 3.09375 7.13604 3.09375 9V18C3.09375 19.864 4.60479 21.375 6.46875 21.375H20.5312C22.3952 21.375 23.9062 19.864 23.9062 18V9C23.9062 7.13604 22.3952 5.625 20.5312 5.625Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path class="stroke-zinc-700" d="M3.09375 10.6875H23.9062" stroke="black" stroke-width="1.5"></path>
+                    <path class="stroke-zinc-700" d="M16.5938 16.0312H19.9688" stroke="black" stroke-width="1.5" stroke-linecap="round"></path>
+                </svg>
+                اتمام خرید
+            </a>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row px-4 md:px-10 mt-10 gap-5 pb-20">
+            <div class="lg:w-9/12 border border-zinc-200 rounded-xl divide-y divide-zinc-200">
+                {% for item in cart_items %}
+                <div class="mt-7 flex flex-col md:flex-row gap-y-5 p-4 cart-item" data-product-id="{{ item.id }}" data-detail="{{ item.detail }}">
+                    <div class="w-10/12 mx-auto max-w-52 md:max-w-36">
+                        <img class="rounded-lg" src="{{ item.image }}" alt="{{ item.name }}">
+                    </div>
+                    <div class="mr-2 md:mr-5 w-full flex flex-wrap gap-y-3">
+                        <div class="md:w-9/12 h-fit">
+                            <a href="#" class="w-full text-sm sm:text-base text-zinc-700 mb-5">
+                                {{ item.name }}
+                            </a>
+                            {% if item.detail %}
+                            <div class="flex gap-1.5 mt-7">
+                                <div class="text-xs text-zinc-500">{{ item.detail }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="w-full md:w-3/12 flex justify-end">
+                            <div class="text-gray-700">
+                                <div class="quantity-container flex mr-auto h-10 w-24 items-center justify-between rounded-lg border border-gray-100 px-2 py-1">
+                                    <button class="cursor-pointer increment-btn" type="button">
+                                        <svg class="fill-green-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256">
+                                            <path d="M222,128a6,6,0,0,1-6,6H134v82a6,6,0,0,1-12,0V134H40a6,6,0,0,1,0-12h82V40a6,6,0,0,1,12,0v82h82A6,6,0,0,1,222,128Z"></path>
+                                        </svg>
+                                    </button>
+                                    <input value="{{ item.quantity }}" disabled type="number" class="item-quantity flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm text-zinc-700 outline-none">
+                                    <button class="cursor-pointer decrement-btn" type="button">
+                                        <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256">
+                                            <path d="M222,128a6,6,0,0,1-6,6H40a6,6,0,0,1,0-12H216A6,6,0,0,1,222,128Z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex mt-5">
+                                    <div class="text-2xl md:text-3xl text-zinc-700 item-total-price">{{ item.total_price|intcomma }}</div>
+                                    <div class="-rotate-90 text-zinc-400 text-xs">تومان</div>
+                                </div>
+                                <button class="remove-item mt-2 text-red-500 text-sm hover:text-red-700 transition-colors" data-product-id="{{ item.id }}" data-detail="{{ item.detail }}">
+                                    حذف از سبد
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-8 text-center text-zinc-500">
+                    سبد خرید شما خالی است
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="lg:w-3/12 lg:pt-5 my-10 lg:my-0">
+                <div class="flex justify-between items-center text-primary-500">
+                    <div class="">جمع مبلغ نهایی</div>
+                    <div class="flex">
+                        <div class="text-2xl md:text-4xl font-yekanBakhBold total-price">{{ total_price|intcomma }}</div>
+                        <div class="-rotate-90 text-xs">تومان</div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-zinc-600 mt-5">
+                    <div class="text-sm">جمع مبلغ کل</div>
+                    <div class="flex">
+                        <div class="md:text-xl total-price">{{ total_price|intcomma }}</div>
+                        <div class="-rotate-90 text-[0.6rem]">تومان</div>
+                    </div>
+                </div>
+                {% if cart_items %}
+                <a href="{% url 'order:createOrder' %}" class="block bg-gradient-to-bl from-primary-400 to-primary-600 hover:opacity-80 text-white text-center mt-10 px-5 md:px-2.5 py-3 md:py-4 rounded-xl shadow-lg transition-all font-yekanBakhBold md:text-lg">
+                    ثبت و ادامه
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // افزایش تعداد
+    document.querySelectorAll('.increment-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const item = this.closest('.cart-item');
+            const productId = item.dataset.productId;
+            const detail = item.dataset.detail;
+            const quantityInput = item.querySelector('.item-quantity');
+            let quantity = parseInt(quantityInput.value);
+
+            quantity += 1;
+            updateCartItem(productId, detail, quantity, item);
+        });
+    });
+
+    // کاهش تعداد
+    document.querySelectorAll('.decrement-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const item = this.closest('.cart-item');
+            const productId = item.dataset.productId;
+            const detail = item.dataset.detail;
+            const quantityInput = item.querySelector('.item-quantity');
+            let quantity = parseInt(quantityInput.value);
+
+            if (quantity > 1) {
+                quantity -= 1;
+                updateCartItem(productId, detail, quantity, item);
+            }
+        });
+    });
+
+    // حذف آیتم
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const detail = this.dataset.detail;
+            removeCartItem(productId, detail);
+        });
+    });
+
+    function updateCartItem(productId, detail, quantity, itemElement) {
+        fetch('{% url "order:update_cart_quantity" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: quantity,
+                detail: detail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // به روزرسانی مقدار تعداد
+                itemElement.querySelector('.item-quantity').value = quantity;
+
+                // به روزرسانی قیمت کل آیتم
+                const updatedItem = data.items.find(item =>
+                    item.id == productId && item.detail == detail
+                );
+                if (updatedItem) {
+                    itemElement.querySelector('.item-total-price').textContent =
+                        Math.round(updatedItem.total_price).toLocaleString();
+                }
+
+                // به روزرسانی قیمت کل سبد خرید
+                document.querySelectorAll('.total-price').forEach(element => {
+                    element.textContent = Math.round(data.total_price).toLocaleString();
+                });
+            } else {
+                alert('خطا در به روزرسانی سبد خرید: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('خطا در ارتباط با سرور');
+        });
+    }
+
+    function removeCartItem(productId, detail) {
+        fetch('{% url "order:remove_from_cart" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                detail: detail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // حذف آیتم از صفحه
+                const itemElement = document.querySelector(`[data-product-id="${productId}"][data-detail="${detail}"]`);
+                if (itemElement) {
+                    itemElement.remove();
+                }
+
+                // به روزرسانی قیمت کل
+                document.querySelectorAll('.total-price').forEach(element => {
+                    element.textContent = Math.round(data.total_price).toLocaleString();
+                });
+
+                // اگر سبد خرید خالی شد، نمایش پیام
+                if (data.cart_count === 0) {
+                    location.reload();
+                }
+            } else {
+                alert('خطا در حذف محصول: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('خطا در ارتباط با سرور');
+        });
+    }
+});
+</script>
+{% endblock content %}

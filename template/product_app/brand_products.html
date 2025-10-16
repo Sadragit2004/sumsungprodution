@@ -1,0 +1,466 @@
+{% extends "main_template.html" %}
+{% load render_partial %}
+{% load humanize %}
+
+
+{% block meta1 %}
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="robots" content="{{ robots }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="{{ og_type }}">
+  <meta property="og:site_name" content="{{ og_site_name }}">
+  <meta property="og:title" content="{{ og_title }}">
+  <meta property="og:description" content="{{ og_description }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:url" content="{{ og_url }}">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="{{ twitter_card }}">
+  <meta name="twitter:title" content="{{ twitter_title }}">
+  <meta name="twitter:description" content="{{ twitter_description }}">
+  <meta name="twitter:image" content="{{ twitter_image }}">
+
+  <!-- Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Brand",
+    "name": "{{ brand.title|escapejs }}",
+    "description": "{{ description|striptags|escapejs }}",
+    "url": "{{ request.build_absolute_uri }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.build_absolute_uri }}{{ brand.image.url }}"
+    },
+    "makesOffer": [
+      {% for product in products %}
+      {
+        "@type": "Product",
+        "name": "{{ product.title|escapejs }}",
+        "image": "{{ request.build_absolute_uri }}{{ product.image.url }}",
+        "sku": "{{ product.id }}",
+        "brand": {
+          "@type": "Brand",
+          "name": "{{ brand.title|escapejs }}"
+        },
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "IRR",
+          "price": "{{ product.price }}",
+          "availability": "{% if product.isActive %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+          "url": "{{ request.build_absolute_uri }}{{ product.get_absolute_url }}"
+        }
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }
+  </script>
+{% endblock meta1 %}
+
+
+{% block content %}
+
+
+<main class="pt-24 md:pt-48 px-2 md:px-10">
+    <div class="flex flex-col lg:flex-row md:px-8 md:mt-10 gap-5 pb-20">
+      <!-- filters -->
+      <div class="lg:w-3/12">
+        <!-- filter btn -->
+        <a href="#" class="filter-mobile md:hidden border border-zinc-200 bg-primary-500 fixed p-4 bottom-5 right-5 z-10 rounded-2xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#fff" viewBox="0 0 256 256"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z"></path></svg>
+        </a>
+        <div id="mobile-filter" class="space-y-5 fixed transform translate-y-full md:translate-y-0 transition-transform duration-300 ease-in-out md:static bottom-0 right-4 z-[15] bg-white w-11/12 md:w-full shadow-2xl md:shadow-none border border-zinc-300 md:border-0 pb-5 px-5 md:px-0 rounded-t-2xl md:rounded-none">
+          <button id="closeFilter" type="button" class="md:hidden mt-5 text-gray-400 cursor-pointer bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+          </button>
+
+          {% render_partial 'product:category_filter_group' %}
+          {% render_partial 'product:category_filter_brand' %}
+          {% comment %} {% render_partial 'product:category_filter_feature' slug=slug %} {% endcomment %}
+          {% include "product_app/shop/filter_price.html" %}
+
+
+
+
+          <label class="border border-zinc-100 h-fit rounded-2xl hover:shadow-sm transition-all flex justify-between w-full py-5 px-4 cursor-pointer" for="onlyAvailableDesktop">
+            <div class="text-zinc-700 text-sm">
+              فقط کالا های موجود
+            </div>
+            <div class="relative inline-flex cursor-pointer items-center">
+              <input class="peer sr-only" id="onlyAvailableDesktop" type="checkbox">
+              <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-400 peer-checked:after:translate-x-full peer-focus:ring-primary-400"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <!-- products -->
+      <div class="lg:w-9/12">
+        <div class="flex flex-wrap gap-3 md:gap-5 justify-start items-center bg-white shadow-box-sm rounded-3xl px-5 py-6 border border-zinc-100 mb-5">
+          <div class="text-zinc-600 text-sm">
+            مرتب سازی:
+          </div>
+          <div class="flex gap-3">
+
+    <a href="?sort=2" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '2' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+        پرفروش ترین
+    </a>
+    <a href="?sort=3" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '3' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+        ارزان ترین
+    </a>
+    <a href="?sort=2" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '2' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+        گران ترین
+    </a>
+    <a href="?sort=1" class="text-xs hover:text-primary-500 transition cursor-pointer {% if request.GET.sort == '1' %}text-primary-500{% else %}text-zinc-500 hover:text-primary-400{% endif %}">
+        جدیدترین
+    </a>
+</div>
+
+
+        </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="products-container">
+    {% for product in products %}
+        <div class="card swiper-slide bg-white border border-zinc-200 rounded-2xl p-2 md:p-3 text-sm hover:shadow-custom transition-shadow">
+            <a href="{{ product.get_absolute_url }}" class="text-zinc-800">
+                <img class="rounded-xl mb-3" src="{{ product.image.url }}">
+            </a>
+            <p class="text-zinc-400 text-xs">
+                {{ product.brand.title }}
+            </p>
+            <a href="{{ product.get_absolute_url }}" class="text-zinc-800 text-xs md:text-sm h-8 lg:h-10 line-clamp-2 mt-2">
+                {{ product.title }}
+            </a>
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex gap-1.5">
+                    {% for feature in product.features_value.all %}
+                        {% if feature.feature.title == "رنگ" %}
+                            <div class="size-6 rounded-full border border-zinc-300"
+                                 style="background-color: {{ feature.filterValue.value }};">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="flex items-start gap-x-1 text-xs text-zinc-500">
+                    <span>
+                        <span>({{ product.comments.count }})</span>
+                        <span>{{ product.avg_rating }}</span>
+                    </span>
+                    <svg class="fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#f9bc00" viewBox="0 0 256 256">
+                        <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex items-center justify-end border-t border-dashed border-zinc-300 mt-4 pt-2">
+                <div class="text-zinc-800 flex items-center gap-x-1 justify-end font-yekanBakhBold text-lg">
+                    {{ product.price|intcomma }}
+                    <img class="size-4" src="{{ media_url }}image/icons/toman.png" alt="">
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- دکمه Load More -->
+{% if products.has_next %}
+    <div class="text-center mt-8" id="load-more-container">
+        <button id="load-more-btn"
+                class="bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors"
+                data-next-page="{{ products.next_page_number }}">
+            بارگذاری بیشتر
+        </button>
+    </div>
+{% endif %}
+
+<!-- اسکریپت Load More -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const productsContainer = document.getElementById('products-container');
+    const loadMoreContainer = document.getElementById('load-more-container');
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            const nextPage = this.getAttribute('data-next-page');
+            const currentUrl = window.location.href;
+
+            // نمایش لودر
+            this.innerHTML = 'در حال بارگذاری...';
+            this.disabled = true;
+
+            // ایجاد پارامترهای URL
+            const url = new URL(currentUrl);
+            url.searchParams.set('page', nextPage);
+
+            // درخواست AJAX
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // اضافه کردن محصولات جدید
+                data.products.forEach(product => {
+                    const productHTML = `
+                        <div class="card swiper-slide bg-white border border-zinc-200 rounded-2xl p-2 md:p-3 text-sm hover:shadow-custom transition-shadow">
+                            <a href="${product.url}" class="text-zinc-800">
+                                <img class="rounded-xl mb-3" src="${product.image_url}">
+                            </a>
+                            <p class="text-zinc-400 text-xs">
+                                ${product.brand}
+                            </p>
+                            <a href="${product.url}" class="text-zinc-800 text-xs md:text-sm h-8 lg:h-10 line-clamp-2 mt-2">
+                                ${product.title}
+                            </a>
+                            <div class="flex items-center justify-between mt-4">
+                                <div class="flex gap-1.5">
+                                    ${product.colors.map(color =>
+                                        `<div class="size-6 rounded-full border border-zinc-300" style="background-color: ${color.value};"></div>`
+                                    ).join('')}
+                                </div>
+                                <div class="flex items-start gap-x-1 text-xs text-zinc-500">
+                                    <span>
+                                        <span>(${product.comments_count})</span>
+                                        <span>${product.avg_rating}</span>
+                                    </span>
+                                    <svg class="fill-primary-500" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#f9bc00" viewBox="0 0 256 256">
+                                        <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end border-t border-dashed border-zinc-300 mt-4 pt-2">
+                                <div class="text-zinc-800 flex items-center gap-x-1 justify-end font-yekanBakhBold text-lg">
+                                    ${new Intl.NumberFormat().format(product.price)}
+                                    <img class="size-4" src="{{ media_url }}image/icons/toman.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                });
+
+                // به‌روزرسانی دکمه Load More
+                if (data.has_next) {
+                    loadMoreBtn.setAttribute('data-next-page', data.next_page_number);
+                    loadMoreBtn.innerHTML = 'بارگذاری بیشتر';
+                    loadMoreBtn.disabled = false;
+                } else {
+                    loadMoreContainer.remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadMoreBtn.innerHTML = 'خطا در بارگذاری';
+                setTimeout(() => {
+                    loadMoreBtn.innerHTML = 'بارگذاری بیشتر';
+                    loadMoreBtn.disabled = false;
+                }, 2000);
+            });
+        });
+    }
+});
+
+
+// جایگزین اسکریپت قبلی
+document.addEventListener('DOMContentLoaded', function() {
+    const productsContainer = document.getElementById('products-container');
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = true;
+
+    function loadMoreProducts() {
+        if (isLoading || !hasMore) return;
+
+        isLoading = true;
+        currentPage++;
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', currentPage);
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // اضافه کردن محصولات جدید
+            data.products.forEach(product => {
+                const productHTML = `
+                    <!-- همان HTML محصول -->
+                `;
+                productsContainer.insertAdjacentHTML('beforeend', productHTML);
+            });
+
+            hasMore = data.has_next;
+            isLoading = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            isLoading = false;
+        });
+    }
+
+    // تشخیص رسیدن به انتهای صفحه
+    window.addEventListener('scroll', function() {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+        if (scrollTop + clientHeight >= scrollHeight - 100) {
+            loadMoreProducts();
+        }
+    });
+});
+</script>
+
+      </div>
+    </div>
+  </main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // مقداردهی اولیه اسلایدر قیمت
+    initPriceSlider();
+
+    // اضافه کردن event listener برای checkbox ها
+    initFilterCheckboxes();
+
+    // اضافه کردن event listener برای باز/بسته کردن منوها
+});
+
+function initPriceSlider() {
+    var slider = document.getElementById('shop-price-slider');
+    if (!slider) return;
+
+    var minPrice = {{ result_price.min_price|default:"0" }};
+    var maxPrice = {{ result_price.max_price|default:"0" }};
+
+    // مقداردهی اولیه با مقادیر فعلی از URL
+    var currentMinPrice = {{ request.GET.price_min|default:result_price.min_price|default:"0" }};
+    var currentMaxPrice = {{ request.GET.price_max|default:result_price.max_price|default:"0" }};
+
+    if (minPrice === maxPrice) {
+        maxPrice = minPrice + 1000;
+    }
+
+    noUiSlider.create(slider, {
+        start: [currentMinPrice, currentMaxPrice],
+        connect: true,
+        range: {
+            'min': minPrice,
+            'max': maxPrice
+        }
+    });
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    slider.noUiSlider.on('update', function(values) {
+        var minVal = Math.round(values[0]);
+        var maxVal = Math.round(values[1]);
+
+        document.getElementById('shop-price-slider-min').innerText = numberWithCommas(minVal);
+        document.getElementById('shop-price-slider-max').innerText = numberWithCommas(maxVal);
+
+        // به‌روزرسانی hidden inputs
+        document.getElementById('min-price').value = minVal;
+        document.getElementById('max-price').value = maxVal;
+    });
+
+    // سابمیت خودکار هنگام تغییر اسلایدر (نه فقط هنگام رها کردن)
+    slider.noUiSlider.on('change', function() {
+        submitFilterForm();
+    });
+
+    // نمایش قیمت‌های اولیه
+    document.getElementById('shop-price-slider-min').innerText = numberWithCommas(currentMinPrice);
+    document.getElementById('shop-price-slider-max').innerText = numberWithCommas(currentMaxPrice);
+}
+
+function initFilterCheckboxes() {
+    // انتخاب تمام checkbox های فیلتر
+    var checkboxes = document.querySelectorAll('.filter-checkbox');
+
+    checkboxes.forEach(function(checkbox) {
+        // سابمیت خودکار هنگام تغییر هر checkbox
+        checkbox.addEventListener('change', function() {
+            submitFilterForm();
+        });
+    });
+}
+
+function initMenuToggles() {
+    // مدیریت باز و بسته شدن منوهای آکاردئونی
+    var menuToggles = document.querySelectorAll('.menu-toggle');
+
+    menuToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+            var submenu = this.parentElement.querySelector('.submenu');
+            var arrow = this.querySelector('img');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                submenu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+}
+
+// تابع برای سابمیت فرم فیلتر
+function submitFilterForm() {
+    // ایجاد یک فرم داینامیک
+    var form = document.createElement('form');
+    form.method = 'GET';
+    form.action = window.location.pathname;
+
+    // اضافه کردن پارامترهای برندها
+    var brandCheckboxes = document.querySelectorAll('input[name="brand"]:checked');
+    brandCheckboxes.forEach(function(checkbox) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'brand';
+        input.value = checkbox.value;
+        form.appendChild(input);
+    });
+
+    // اضافه کردن پارامترهای ویژگی‌ها
+    var featureCheckboxes = document.querySelectorAll('input[name="feature"]:checked');
+    featureCheckboxes.forEach(function(checkbox) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'feature';
+        input.value = checkbox.value;
+        form.appendChild(input);
+    });
+
+    // اضافه کردن پارامترهای قیمت
+    var minPrice = document.getElementById('min-price').value;
+    var maxPrice = document.getElementById('max-price').value;
+    if (minPrice) {
+        var inputMin = document.createElement('input');
+        inputMin.type = 'hidden';
+        inputMin.name = 'price_min';
+        inputMin.value = minPrice;
+        form.appendChild(inputMin);
+    }
+    if (maxPrice) {
+        var inputMax = document.createElement('input');
+        inputMax.type = 'hidden';
+        inputMax.name = 'price_max';
+        inputMax.value = maxPrice;
+        form.appendChild(inputMax);
+    }
+
+    // سابمیت فرم
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+
+
+
+{% endblock content %}
